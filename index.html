@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Fistful of Gacha - Master Collector 3.0</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/work.css">
+    <link rel="stylesheet" href="css/arena.css">
+    <link rel="stylesheet" href="css/shop.css">
+    <link rel="stylesheet" href="css/collection.css">
+    <link rel="stylesheet" href="css/achievements.css">
+    <link rel="stylesheet" href="css/figures.css">
+</head>
+<body>
+    <nav>
+        <h2 style="color:var(--red); font-size:1.5rem; margin-top:0; text-align:center; letter-spacing: 2px;">FISTFUL<br>OF ALIENS</h2>
+        
+        <div style="background:#0a0c14; padding:15px; border-radius:10px; border:1px solid #333; margin-bottom:20px;">
+            <div style="font-size:0.8rem; color:#888; margin-bottom:2px;">💰 LOMMEPENGE</div>
+            <div id="ui-currency" style="color:var(--gold); font-weight:bold; font-size:1.2rem; margin-bottom:12px;">0</div>
+            
+            <div style="font-size:0.8rem; color:#888; margin-bottom:2px;">⚡ KR/SEK</div>
+            <div id="ui-premium" style="color:var(--green); font-weight:bold; font-size:1.2rem; margin-bottom:12px;">0.0</div>
+            
+            <div style="font-size:0.8rem; color:#888; margin-bottom:2px;">🧬 JANGUTZ</div>
+            <div id="ui-jangutz" style="color:var(--blue); font-weight:bold; font-size:1.2rem;">0</div>
+        </div>
+
+        <button onclick="showPage('work')" id="nav-work" class="active">🛠️ PLIGTER</button>
+        <button onclick="showPage('shop')" id="nav-shop">🛒 SHOP</button>
+        <button onclick="showPage('collection')" id="nav-collection">📖 SAMLING</button>
+        <button onclick="showPage('arena')" id="nav-arena">⚔️ ARENA</button>
+        <button onclick="showPage('achievements')" id="nav-achievements">🏆 TROFÆER</button>
+        <button onclick="showPage('rules')" id="nav-rules">📜 REGLER</button>
+        
+        <button onclick="if(typeof AudioManager !== 'undefined') AudioManager.sfx.play('ui', 'popup-open'); document.getElementById('audioModal').style.display='flex'" id="nav-audio" style="margin-top:20px;">🔊 LYD</button>
+
+        <button onclick="resetGame()" style="margin-top:auto; background:#331111; color:#ff5555; border:1px solid #552222; font-size:0.8rem;">⚠️ NULSTIL SPIL</button>
+    </nav>
+
+    <div id="main-content">
+        
+        <div id="revealOverlay" class="reveal-overlay" onclick="closeReveal()">
+            <div id="bigCard" class="reveal-card-big">
+                <div id="bigBar" class="type-bar"></div>
+                <div id="bigStatus" class="card-status-overlay"></div>
+                <div id="bigTL" class="card-corner card-tl"></div>
+                <div id="bigTR" class="card-corner card-tr"></div>
+                
+                <h1 id="bigName">ALIEN</h1>
+                <img id="bigImg" class="pixel-art">
+                
+                <div id="bigBR" class="card-corner card-br">PWR: 15</div>
+            </div>
+        </div>
+
+        <div id="detailModal" class="modal" onclick="if(event.target == this) this.style.display='none'">
+            <div class="modal-content" id="modalContent"></div>
+        </div>
+
+        <!-- Custom Alert/Confirm Modal -->
+        <div id="customModal" class="modal" style="display:none; z-index: 10001;">
+            <div class="modal-content" style="max-width: 400px; text-align: center; border-color: var(--gold);">
+                <h3 id="customModalTitle" style="color: var(--gold); margin-top: 0;">Meddelelse</h3>
+                <p id="customModalText" style="color: #ccc; line-height: 1.5; margin-bottom: 25px;">Tekst her...</p>
+                <div id="customModalButtons" style="display: flex; gap: 10px;">
+                    <button id="customModalBtnConfirm" style="flex:1; padding: 12px; background: var(--green); border: none; color: #fff; border-radius: 8px; cursor: pointer; font-weight: bold;">JA</button>
+                    <button id="customModalBtnCancel" style="flex:1; padding: 12px; background: var(--red); border: none; color: #fff; border-radius: 8px; cursor: pointer; font-weight: bold;">NEJ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio Settings Modal -->
+        <div id="audioModal" class="modal" style="display:none; z-index: 10001;" onclick="if(event.target == this) { this.style.display='none'; if(typeof AudioManager !== 'undefined') AudioManager.sfx.play('ui', 'popup-close'); }">
+            <div class="modal-content" style="max-width: 350px; text-align: center; border-color: var(--gold);">
+                <h3 style="color: var(--gold); margin-top: 0; margin-bottom: 20px;">LYDINDSTILLINGER</h3>
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <span style="color:#aaa; font-weight:bold;">Musik</span>
+                    <input type="range" id="vol-bgm" min="0" max="1" step="0.05" style="width:150px; cursor:pointer;" onchange="AudioManager.updateVolume('bgm', this.value)" oninput="AudioManager.updateVolume('bgm', this.value)">
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <span style="color:#aaa; font-weight:bold;">Effekter</span>
+                    <input type="range" id="vol-sfx" min="0" max="1" step="0.05" style="width:150px; cursor:pointer;" onchange="AudioManager.updateVolume('sfx', this.value)" oninput="AudioManager.updateVolume('sfx', this.value)">
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <span style="color:#aaa; font-weight:bold;">Announcer</span>
+                    <input type="range" id="vol-announcer" min="0" max="1" step="0.05" style="width:150px; cursor:pointer;" onchange="AudioManager.updateVolume('announcer', this.value)" oninput="AudioManager.updateVolume('announcer', this.value)">
+                </div>
+                
+                <button onclick="document.getElementById('audioModal').style.display='none'; if(typeof AudioManager !== 'undefined') AudioManager.sfx.play('ui', 'popup-close');" style="padding: 12px; background: var(--blue); border: none; color: #fff; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%;">LUK</button>
+            </div>
+        </div>
+
+        <div id="page-shop" class="page active">
+            <div style="text-align:center; padding: 20px;">
+                <h2>SHOP</h2>
+                <div id="shop-buttons" style="display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin-bottom:20px;">
+                    <!-- Knapper genereres i script.js eller hardcodes her -->
+                </div>
+                <div id="shop-batch" class="shop-batch-grid"></div>
+            </div>
+        </div>
+
+        <div id="page-work" class="page">
+            <div class="page-content">
+                <h2 class="page-title">TJEN PENGE</h2>
+
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-label">KR. / KLIK</div>
+                        <div id="ui-click-power" class="stat-value" style="color:var(--blue);">1.00</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">KR. / SEK</div>
+                        <div id="ui-auto-power" class="stat-value" style="color:var(--green);">0.00</div>
+                    </div>
+                </div>
+
+                <div class="work-grid">
+                    <div class="work-grid-left">
+                        <button id="work-btn" onclick="manualWork(event)">
+                            <img id="work-gif" src="assets/click_gifs/samle_pant.gif" style="width:100%; height:100%; object-fit:contain;">
+                        </button>
+                    </div>
+                    <div class="work-grid-right">
+                        <div id="work-manual-tasks" class="work-sub-col"></div>
+                        <div id="work-passive-tasks" class="work-sub-col"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-collection" class="page">
+            <div style="text-align:center;"><h2>SAMLING</h2></div>
+            <div class="collection-tabs">
+                <button class="tab-btn active" onclick="switchCollectionTab('figures')" id="tab-figures">FIGURER</button>
+                <button class="tab-btn" onclick="switchCollectionTab('gear')" id="tab-gear">UDSTYR</button>
+                <button class="tab-btn" onclick="switchCollectionTab('album')" id="tab-album">ALBUM (KORT)</button>
+            </div>
+            <div class="controls" id="collection-controls">
+                <span>SORTER:</span>
+                <select id="sortSelect" onchange="updateCollection()">
+                    <option value="id">ID (Kategorier)</option>
+                    <option value="power">Højeste Power</option>
+                </select>
+                <button id="btn-sell-unlocked" onclick="sellUnlocked()" style="margin-left:auto; background:var(--red); color:#fff; border:none; padding:10px; border-radius:5px; font-weight:bold; cursor:pointer;">SÆLG ULÅSTE (+5)</button>
+            </div>
+            <div id="album-content"></div>
+        </div>
+
+        <div id="page-achievements" class="page">
+            <div style="text-align:center; max-width:800px; margin: 0 auto;">
+                <h2>TROFÆER & MILEPÆLE</h2>
+                <div id="achievements-list"></div>
+            </div>
+        </div>
+
+        <div id="page-arena" class="page">
+            <!-- Arena indhold genereres dynamisk -->
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/audio.js"></script>
+    <!-- Arena Modules (must load before main.js) -->
+    <script src="js/arena/arena-campaign.js"></script>
+    <script src="js/arena/arena-builder.js"></script>
+    <script src="js/arena/battle-engine.js"></script>
+    <script src="js/arena/battle-templates.js"></script>
+    <script src="js/arena/battle-effects.js"></script>
+    <script src="js/arena/battle-ai.js"></script>
+    <script src="js/arena/battle-ui.js"></script>
+    <script src="js/arena/arena-controller.js"></script> <!-- Arena Controller -->
+    
+    <script src="js/main.js"></script>
+    <script src="js/economy.js"></script>
+    <script src="js/shop.js"></script>
+    <script src="js/collection.js"></script>
+    <script src="js/pack-opener.js"></script>
+    <script src="js/postordre.js"></script>
+  
+</body>
+</html>

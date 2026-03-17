@@ -1,0 +1,174 @@
+.shop-batch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(clamp(90px, 20vw, 130px), 1fr)); gap: 15px; margin-top: 20px; justify-content: center; }
+.shop-card-anim { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; }
+.shop-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+/* Retro Shop Header */
+.shop-top-bar {
+    background-color: #e60000; /* Stærk rød */
+    height: 60px;
+    width: 100%;
+    position: relative;
+    border-bottom: 4px solid #000;
+}
+
+.shop-logo-circle {
+    position: absolute;
+    left: 50%;
+    bottom: -25px; /* Halvt ude af baren */
+    transform: translateX(-50%);
+    width: 70px;
+    height: 70px;
+    background: white;
+    border: 4px solid #000;
+    border-radius: 50%;
+    z-index: 10;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- KARRUSEL & PAKKER (Fra shop.js) --- */
+.shop-carousel-wrapper { display: flex; align-items: center; justify-content: center; position: relative; height: 600px; overflow: hidden; }
+#pack-content-wrapper { position: relative; width: 350px; height: 100%; }
+.pack-container { position: absolute; top: 0; left: 0; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%; text-align: center; }
+.pack-title { font-size: 1.8rem; white-space: nowrap; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 3px 10px rgba(0,0,0,0.7); margin: 0 0 5px 0; color: var(--pack-color, #fff); }
+.pack-display { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; cursor: pointer; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+.pack-display:hover { transform: scale(1.05); }
+.pack-img { max-width: 100%; max-height: 400px; object-fit: contain; image-rendering: pixelated; transition: transform 0.1s ease-out; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6)); }
+.pack-img.locked { filter: grayscale(1) brightness(0.5); }
+
+.pack-desc { font-size: 0.9rem; color: #ccc; margin-bottom: 10px; min-height: 1.5em; max-width: 90%; line-height: 1.4; }
+
+.pack-price-tag { position: absolute; top: 10%; right: 5%; width: 85px; height: 85px; background: var(--gold); color: #000; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; font-size: 1.8rem; transform: rotate(15deg); border: 4px solid #fff; box-shadow: 0 5px 20px rgba(0,0,0,0.6); z-index: 20; line-height: 1; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.pack-price-tag span { font-size: 0.8rem; font-weight: bold; margin-top: -2px; }
+.pack-price-tag.locked { background: #333; color: #888; border-color: #555; }
+
+.pack-display:hover .pack-price-tag { transform: rotate(25deg) scale(1.1); }
+.pack-display:active .pack-price-tag { transform: scale(0.95); }
+
+.nav-arrow { background: rgba(0,0,0,0.3); color: #fff; border: 1px solid #555; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; z-index: 20; transition: 0.2s; position: absolute; top: 50%; transform: translateY(-50%); }
+.nav-arrow.prev { left: 20px; }
+.nav-arrow.next { right: 20px; }
+.nav-arrow:hover { background: var(--blue); border-color: #fff; transform: translateY(-50%) scale(1.1); }
+
+.elite-shop-button { background: radial-gradient(circle, #4a3800 0%, #1a1400 100%); border: 2px solid var(--gold); color: #fff; padding: 20px; border-radius: 15px; cursor: pointer; width: 100%; max-width: 400px; transition: 0.2s; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); text-align: center; }
+.elite-shop-button:hover { transform: scale(1.02); box-shadow: 0 0 40px rgba(255, 215, 0, 0.4); }
+.elite-shop-icon { font-size: 2rem; display: block; margin-bottom: 5px; }
+.elite-shop-title { font-weight: bold; font-size: 1.5rem; color: var(--gold); display: block; }
+.elite-shop-desc { font-size: 0.9rem; color: #ccc; display: block; }
+
+.drop-rates-btn { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.4); border: 1px solid #444; color: #aaa; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; font-weight: bold; display: flex; align-items: center; gap: 8px; transition: all 0.2s; z-index: 30; }
+.drop-rates-btn:hover { background: var(--blue); color: #fff; border-color: #fff; transform: scale(1.05); }
+.drop-rates-icon { font-size: 1.2rem; }
+
+/* Animations for Carousel Skift */
+@keyframes slide-out-left { to { transform: translateX(-120%); opacity: 0; } }
+@keyframes slide-in-right { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slide-out-right { to { transform: translateX(120%); opacity: 0; } }
+@keyframes slide-in-left { from { transform: translateX(-120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+.anim-slide-out-left { animation: slide-out-left 0.25s forwards ease-in-out; }
+.anim-slide-in-right { animation: slide-in-right 0.25s forwards ease-in-out; }
+.anim-slide-out-right { animation: slide-out-right 0.25s forwards ease-in-out; }
+.anim-slide-in-left { animation: slide-in-left 0.25s forwards ease-in-out; }
+
+.evil-shake { animation: evilShake 4s infinite; filter: drop-shadow(0 0 15px var(--red)); }
+@keyframes evilShake { 0%, 94% { transform: translate(0, 0) rotate(0deg); } 95% { transform: translate(2px, 1px) rotate(-2deg); } 96% { transform: translate(-2px, -2px) rotate(2deg); } 97% { transform: translate(3px, 0px) rotate(-2deg); } 98% { transform: translate(-1px, 2px) rotate(2deg); } 99% { transform: translate(2px, -1px) rotate(-1deg); } 100% { transform: translate(0, 0) rotate(0deg); } }
+
+
+/* --- PACK OPENER (Fra pack-opener.js) --- */
+
+/* Fullscreen Overlay for Pack Opening */
+.pack-opener-overlay {
+    display: flex; flex-direction: column; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; 
+    gap: 30px; padding: 20px; overflow-y: auto; box-sizing: border-box;
+}
+
+.game-scene-container.shop-scene { display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: visible; }
+
+/* Flere af pack opener styles lå inde under ID'et #shop-batch. Da overlay klassen sættes PÅ #shop-batch, 
+   virker .pack-opener-overlay styles sammen med disse. */
+
+/* FLIP CARD (Standard) */
+.flip-container { perspective: 1000px; width: clamp(80px, 12cqw, 130px); aspect-ratio: 13/18; height: auto; position: relative; transition: width 0.3s, height 0.3s; }
+.flip-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+.flip-container.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-front, .flip-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 10px; }
+.flip-front { background: #111; display: flex; align-items: center; justify-content: center; border: 2px solid #444; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+.flip-back { transform: rotateY(180deg); }
+
+/* MYSTERY BOX (Rares) */
+.mystery-box-wrapper { width: clamp(80px, 12cqw, 130px); aspect-ratio: 13/18; height: auto; position: relative; display: flex; align-items: flex-end; justify-content: center; }
+.mystery-box-mover { width: 100%; height: 100%; position: relative; z-index: 10; transform: translateY(30%); display: flex; justify-content: center; align-items: flex-end; pointer-events: none; }
+.mystery-box-img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.1s; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); }
+.mystery-item { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; transform: scale(0.1) translateY(50%); opacity: 0; z-index: 5; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; justify-content: center; align-items: flex-end; padding-bottom: 10%; }
+.mystery-item.popped { transform: scale(1) translateY(-5%); opacity: 1; z-index: 15; }
+
+/* PWR Badge Control - Skjult indtil reveal */
+#shop-batch .alien-figure .figure-label { opacity: 0; transition: opacity 0.1s 0.1s; }
+#shop-batch .alien-figure.revealed .figure-label { opacity: 1; }
+
+/* ANIMATIONS */
+.tier-1-shake { animation: shake 0.1s infinite; }
+.tier-2-pulse { animation: shake 0.1s infinite, pulseGlow 1s infinite alternate; }
+.tier-2-pulse-box { animation: shake 0.1s infinite, pulseGlowFilter 1s infinite alternate; }
+.tier-3-heavy-shake { animation: shakeHard 0.1s infinite, pulseGlowFilterTier3 0.5s infinite alternate; }
+.tier-4-glitch { animation: errorGlitch 0.2s infinite, pulseNeon 0.5s infinite; transform: scale(1.2); --glitch-color: #ff00ff; }
+.anim-surge { animation: surge 0.8s ease-out forwards; }
+
+/* STATIC GLOWS (After Open) */
+.glow-tier-2 { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); }
+.glow-tier-3 { filter: brightness(1.3) drop-shadow(0 0 20px rgba(255, 255, 255, 0.9)); }
+.glow-tier-4 { filter: drop-shadow(0 0 20px var(--glitch-color)) drop-shadow(0 0 40px var(--glitch-color)); }
+.screen-shake { animation: shakeHard 0.5s infinite; }
+
+@keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(3deg); } 75% { transform: rotate(-3deg); } 100% { transform: rotate(0deg); } }
+@keyframes pulseGlowFilter { from { filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)); } to { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1)); } }
+@keyframes pulseGlow { from { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); } to { box-shadow: 0 0 30px rgba(255, 215, 0, 1); } }
+@keyframes pulseGlowFilterTier3 { from { filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)); } to { filter: brightness(1.5) drop-shadow(0 0 30px rgba(255, 255, 255, 1)); } }
+@keyframes shakeHard { 0% { transform: translate(2px, 2px) rotate(0deg); } 25% { transform: translate(-2px, -2px) rotate(-5deg); } 50% { transform: translate(2px, -2px) rotate(5deg); } 75% { transform: translate(-2px, 2px) rotate(-5deg); } 100% { transform: translate(0, 0) rotate(0deg); } }
+@keyframes errorGlitch { 0% { transform: translate(0) scale(1.2); } 20% { transform: translate(-5px, 5px) scale(1.2); } 40% { transform: translate(-5px, -5px) scale(1.2); } 60% { transform: translate(5px, 5px) scale(1.2); } 80% { transform: translate(5px, -5px) scale(1.2); } 100% { transform: translate(0) scale(1.2); } }
+@keyframes pulseNeon { 0% { filter: drop-shadow(0 0 30px var(--glitch-color)) drop-shadow(0 0 50px var(--glitch-color)); } 50% { filter: drop-shadow(0 0 50px var(--glitch-color)) drop-shadow(0 0 80px #ffffff) hue-rotate(45deg); } 100% { filter: drop-shadow(0 0 30px var(--glitch-color)) drop-shadow(0 0 50px var(--glitch-color)); } }
+@keyframes surge { 0% { transform: scale(0.1); opacity: 0; filter: brightness(5); } 50% { transform: scale(1.2); opacity: 1; filter: brightness(2); } 100% { transform: scale(1); opacity: 1; filter: brightness(1); } }
+
+#revealOverlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); z-index: 10000;
+    justify-content: center; align-items: center;
+}
+
+/* --- INLINE STYLES EXTRACTED FROM JS --- */
+.shop-content-wrapper { text-align:center; max-width:1200px; margin:0 auto; transition: filter 0.3s; position: relative; }
+.dev-mode-img { width:120px; border-radius:10px; margin-bottom:15px; border:2px solid var(--red); box-shadow: 0 0 15px var(--red); }
+.dev-mode-text { color:var(--red); font-weight:bold; font-size:1.2rem; }
+.pack-status-text { margin-top:15px; color:#666; font-size:0.8rem; font-weight:bold; letter-spacing:1px; text-transform:uppercase; }
+
+.drop-rates-container { text-align:left; line-height:1.6; }
+.dev-rates-title { color:var(--red); font-weight:bold; margin-bottom:15px; font-size:1.2rem; text-shadow:0 0 5px var(--red); text-align:center; }
+.dev-rates-box { background:#220000; padding:15px; border-radius:10px; border:1px solid var(--red); }
+.rates-text { font-size:0.9em; color:#fff; font-weight:bold; margin-top:0; }
+.rates-note { font-size:0.8em; color:#ffaaaa; margin-bottom:0; font-style:italic; }
+.rates-header { color:var(--gold); margin-top:0; }
+.rates-desc { font-size:0.9em; color:#ccc; }
+.rates-list { font-size:0.9em; color:#ccc; margin-left: 20px; list-style-type: square; }
+
+.blister-wrapper { position: relative; width: 300px; height: 400px; display: flex; justify-content: center; align-items: center; margin: 0 auto; }
+.blister-main-img { width: 100%; height: 100%; object-fit: contain; z-index: 10; position: relative; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
+.blister-card-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); display: flex; gap: 10px; z-index: 5; opacity: 0; width: 100%; justify-content: center; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.blister-card-container.popped { z-index: 15; opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+
+.opener-top-row { display:flex; justify-content:center; align-items:center; gap:2cqw; width:100%; z-index:20; perspective:1000px; }
+.opener-wing-left { display:flex; justify-content:flex-end; gap:15px; flex:1; }
+.opener-center-stage { display:flex; justify-content:center; gap:20px; flex-shrink:0; }
+.opener-wing-right { display:flex; justify-content:flex-start; gap:15px; flex:1; }
+.opener-standard-row { display:flex; justify-content:center; gap:2cqw; width:100%; flex-wrap:wrap; z-index:10; perspective:1000px; margin-top: 2cqh; }
+
+.opener-btn-wrapper { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 10000; }
+.btn-buy-again { padding: 15px 50px; background: var(--green); color: #fff; border: 2px solid #fff; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.5rem; box-shadow: 0 0 20px rgba(0,255,0,0.5); animation: pulse 2s infinite; }
+.btn-close-pack { padding: 15px 50px; background: var(--blue); color: #fff; border: 2px solid #fff; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.5rem; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+
+.pack-announcement { position: absolute; top: 5%; left: 50%; transform: translate(-50%, -50%) scale(0.5); z-index: 10001; font-size: clamp(1.5rem, 5cqw, 3rem); font-weight: 900; text-align: center; text-transform: uppercase; pointer-events: none; opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-shadow: 0 5px 15px rgba(0,0,0,0.8); width: 100%; }
+.pack-announcement.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.pack-announcement.hide { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }

@@ -1,0 +1,103 @@
+.animate-bump-p { animation: bumpPlayer 0.4s ease-out; }
+.animate-bump-e { animation: bumpEnemy 0.4s ease-out; }
+
+.animate-defeat-p { animation: defeatPlayer 0.8s ease-in forwards; }
+.animate-defeat-e { animation: defeatEnemy 0.8s ease-in forwards; }
+
+.animate-shake-p { animation: shakePlayer 0.4s ease-in-out; }
+.animate-shake-e { animation: shakeEnemy 0.4s ease-in-out; }
+
+/* JUICY BATTLE ANIMATIONS */
+.anim-clash-p { animation: clashPlayerNew 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.anim-clash-e { animation: clashEnemyNew 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+.anim-shake { animation: shakeNew 0.4s ease-in-out 2; }
+
+.anim-clash-winner-p { animation: clashWinnerP 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+.anim-clash-winner-e { animation: clashWinnerE 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+.anim-clash-loser { animation: clashLoser 0.6s ease-in forwards; }
+
+.anim-fade-out { animation: fadeOutNew 0.8s ease-out forwards; }
+
+.anim-power-reveal { animation: powerReveal 0.5s ease-out; }
+
+.squad-figure-hover { transition: transform 0.2s; }
+.squad-figure-hover:hover { transform: scale(1.3) !important; z-index: 20; }
+
+.battle-bench-figure {
+    transform-origin: bottom center; /* Holder fødderne på jorden */
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), margin 0.6s ease, filter 0.6s ease, opacity 0.6s ease;
+}
+
+/* Tving ensartet størrelse i arenaen, så Flexbox ikke klemmer dem skævt pga. lange navne */
+.battle-field .alien-figure {
+    width: clamp(40px, 11cqw, 110px) !important;
+    min-width: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+.animate-flash { animation: flashEffect 0.4s ease-out; }
+
+/* BATTLE UI */
+.battle-action-btn { background: #222; border: 1px solid #444; color: #fff; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.8rem; transition: 0.2s; }
+.battle-action-btn:hover:not(:disabled) { background: #333; border-color: var(--gold); }
+
+.anim-fly-in { animation: flyInFromBench 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+.anim-fly-in-enemy { animation: flyInFromEnemyBench 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+.pod-select-btn { margin-top: 5px; background: #000; border: 1px solid #444; color: #aaa; font-size: 0.65rem; padding: 3px 8px; border-radius: 10px; cursor: pointer; }
+.pod-icon-btn { width: 40px; height: 40px; object-fit: contain; cursor: pointer; border: 1px solid #444; border-radius: 50%; background: #000; margin-top: 5px; transition: transform 0.1s; }
+.pod-icon-btn:hover { transform: scale(1.1); border-color: var(--gold); }
+
+/* ARENA BATTLE LAYOUT */
+.arena-battle-container { text-align:center; max-width:900px; margin:0 auto; }
+.battle-top-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.btn-surrender { background:#331111; color:#ff5555; border:1px solid #552222; padding:10px 20px; border-radius:50px; font-weight:bold; cursor:pointer; }
+.battle-round-indicator { display:flex; flex-direction:column; align-items:center; }
+.battle-round-text-box { background:#111; padding:5px 15px; border-radius:20px; border:1px solid var(--gold); color:var(--gold); font-weight:bold; margin-bottom:5px; }
+.battle-dots-container { display:flex; gap:5px; }
+.battle-auto-toggle { display:flex; align-items:center; gap:15px; }
+.battle-weapon-indicator { width:40px; height:40px; display:none; transition: opacity 0.3s; }
+.auto-battle-label { cursor:pointer; display:flex; align-items:center; gap:10px; background:#1a1d2e; padding:8px 15px; border-radius:20px; border:1px solid #333; font-weight:bold; color:var(--blue); font-size:0.8rem; }
+.auto-battle-label input { width:16px; height:16px; }
+
+.battle-field { position:relative; width:100%; aspect-ratio:16/9; max-width:1000px; margin:0 auto 20px auto; background:radial-gradient(circle at center, #1a1d2e 0%, #05050a 100%); border-radius:15px; border:1px solid #333; overflow:hidden; container-type:inline-size; }
+.battle-enemy-bench { position:absolute; top:2%; left:5%; display:flex; gap:1cqw; flex-wrap:nowrap; max-width: 80%; align-items: flex-start; }
+.battle-enemy-active { position:absolute; top:15%; right:15%; width:15cqw; aspect-ratio:11/15; display:flex; justify-content:center; align-items:center; }
+.battle-player-active { position:absolute; bottom:15%; left:15%; width:15cqw; aspect-ratio:11/15; display:flex; justify-content:center; align-items:center; }
+.battle-player-bench { position:absolute; bottom:2%; right:5%; display:flex; gap:1cqw; flex-wrap:nowrap; justify-content:flex-end; max-width: 85%; align-items: flex-end; }
+.battle-vs-text { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:clamp(3rem, 15cqw, 8rem); font-weight:bold; color:rgba(255,255,255,0.1); pointer-events:none; transition: opacity 0.3s; }
+.battle-center-overlay { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:50; display:none; flex-direction:column; gap:10px; align-items:center; width: 220px; }
+.result-overlay-active { top:55% !important; }
+
+.battle-bottom-wrapper { display:flex; gap:20px; align-items:flex-end; }
+.battle-actions { display:flex; flex-direction:column; gap:10px; }
+.battle-log-wrapper { flex-grow:1; display:flex; flex-direction:column; gap:10px; }
+.battle-message { height:20px; color:var(--gold); font-weight:bold; text-align:center; }
+.battle-progress-container { width:100%; height:6px; background:#222; border-radius:3px; overflow:hidden; display:none; }
+.battle-progress-bar { width:0%; height:100%; background:var(--blue); transition: width 0.1s linear; }
+.battle-log { background:#0a0c14; border:1px solid #222; border-left:4px solid var(--blue); padding:10px; text-align:left; font-family:monospace; height:80px; border-radius:8px; overflow-y: auto; font-size:0.8rem; }
+
+.result-btn-container { display:flex; gap:10px; width:100%; max-width: 500px; }
+.result-btn { border:none; padding:15px; border-radius:10px; font-weight:bold; font-size:1rem; cursor:pointer; flex:1; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+.btn-build { background:var(--blue); color:#fff; }
+.btn-retry { background:var(--gold); color:#000; }
+.btn-campaign { background:#555; color:#fff; }
+.btn-next { background:var(--green); color:#fff; animation: pulse 2s infinite; }
+
+.battle-announcement { position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0.5); z-index: 100; font-size: clamp(2rem, 8cqw, 4rem); font-weight: 900; text-align: center; text-transform: uppercase; pointer-events: none; opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.4s ease; text-shadow: 0 5px 15px rgba(0,0,0,1); width: 100%; }
+.battle-announcement.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.battle-announcement.hide { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+
+.clash-announcement-content { display:flex; flex-direction:column; align-items:center; line-height:1.1; }
+.clash-vs-text { color:white; font-size:clamp(1.5rem, 5cqw, 2.5rem); margin:10px 0; }
+.clash-fighter { font-size:clamp(2rem, 8cqw, 4.5rem); }
+
+.fighter-style-eramm { background: linear-gradient(90deg, var(--red), var(--blue), var(--green)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; text-shadow: none; font-weight: 900; }
+.fighter-style-sciroid { background: linear-gradient(135deg, #fff 0%, #aaa 50%, #fff 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; text-shadow: 0 0 10px rgba(255,255,255,0.8); }
+.fighter-style-ramm { background: linear-gradient(135deg, #cd7f32 0%, #8b4513 50%, #cd7f32 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; text-shadow: none; }
+.fighter-style-red { color: var(--red); text-shadow: 0 0 10px var(--red); }
+.fighter-style-green { color: var(--green); text-shadow: 0 0 10px var(--green); }
+.fighter-style-blue { color: var(--blue); text-shadow: 0 0 10px var(--blue); }
+.fighter-style-default { color: #fff; text-shadow: 0 0 10px #fff; }

@@ -1,0 +1,132 @@
+.alien-figure {
+    position: relative;
+    width: clamp(70px, 18vw, 110px);
+    max-width: 110px;
+    height: auto;
+    aspect-ratio: 110 / 150;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    background: transparent;
+    margin: 5px;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    min-width: 0; /* Forhindrer at lange navne strækker kortet! */
+    flex-shrink: 0; /* Forhindrer grids og flexbox i at mase dem */
+    overflow: visible; /* Vigtigt for at basen kan ses */
+    vertical-align: bottom;
+    transition: transform 0.2s;
+}
+
+.alien-figure:hover {
+    transform: scale(1.05) translateY(-5px);
+    z-index: 10;
+}
+
+.alien-gif {
+    position: relative;
+    z-index: 2;
+    width: auto;
+    height: auto;
+    transform: scale(1.25);
+    image-rendering: pixelated;
+    margin-bottom: -15px; /* Fast pixel-værdi, så fødderne altid er plantet solidt på .figure-base */
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.4));
+}
+
+.figure-base {
+    position: relative;
+    z-index: 1;
+    width: 75%;
+    height: clamp(15px, 3vw, 25px);
+    border-radius: 50%;
+    margin-bottom: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+}
+
+.figure-label {
+    position: relative;
+    z-index: 3;
+    background: rgba(0,0,0,0.8);
+    padding: 2px 6px;
+    border-radius: 8px;
+    margin-top: 2px;
+    border: 1px solid #444;
+    text-shadow: 0 1px 2px black;
+    display: block;
+    text-align: center;
+    width: 85%; /* Sørger for at det har plads, men ikke flyder ud over kortet */
+}
+
+.figure-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    font-size: clamp(0.55rem, 1.2vw, 0.75rem);
+    color: #fff;
+}
+
+.power-badge {
+    position: absolute;
+    top: -12px;
+    right: -8px;
+    z-index: 5;
+    display: flex; justify-content: center; align-items: center; 
+    width: clamp(18px, 3vw, 26px); aspect-ratio: 1/1; 
+    background: radial-gradient(circle, #ffd700, #b8860b); 
+    border: 2px solid #fff; border-radius: 50%; color: #000; 
+    font-weight: 900; font-size: clamp(0.6rem, 1.5vw, 0.9rem); 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.8); flex-shrink: 0;
+    text-shadow: none;
+}
+
+.power-badge.hidden-power {
+    background: radial-gradient(circle, #888, #444);
+    color: #ccc;
+    border-color: #aaa;
+}
+
+
+/* Base Variants */
+.base-blue {
+    background: radial-gradient(circle at 40% 40%, #aaccff, #0044aa 60%, #001144 100%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 8px #0088ff, inset 0 0 5px rgba(255,255,255,0.4);
+}
+
+.base-green {
+    background: radial-gradient(circle, #88ff88 0%, #006600 80%);
+    box-shadow: 0 0 15px #00ff00;
+    filter: blur(0.5px);
+}
+
+.base-red {
+    background: #440000;
+    /* Kantet metal-look via clip-path */
+    clip-path: polygon(15% 0, 85% 0, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
+    background-image: repeating-linear-gradient(45deg, #660000, #660000 5px, #440000 5px, #440000 10px);
+    border: none;
+}
+
+/* Fallbacks */
+.base-hybrid { background: linear-gradient(90deg, var(--c1, #ffd700), var(--c2, #b8860b)); box-shadow: 0 0 15px gold; border: 2px solid #ffd700; } /* Guld-kant */
+.base-metallic { background: radial-gradient(circle at 30% 30%, #e6ac00, #cd7f32, #8b4513); box-shadow: 0 0 8px #cd7f32; border: 1px solid #8b4513; } /* Bronze */
+.base-none { background: #333; border: 1px solid #555; }
+.base-weapon { background: #222; border: 1px solid #a0f; box-shadow: 0 0 8px #a0f; }
+.base-sciroid { background: radial-gradient(circle at 30% 30%, #ffffff, #d0d0d0, #808080); box-shadow: 0 0 10px white; border: 1px solid #aaa; } /* Sølv */
+.base-eramm { background: linear-gradient(90deg, #ff0055, #00d4ff, #39ff14); box-shadow: 0 0 12px rgba(255,255,255,0.8); border: 2px solid #fff; } /* Trefarvet */
+.base-locked { background: #222; border: 1px solid #444; box-shadow: none; }
+
+/* "Samler-væg" hylde (Added here as requested to be part of visual design) */
+.row-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(80px, 15vw, 110px), 1fr));
+    justify-items: center; /* Holder figuren i midten af sin faste kolonne */
+    gap: 15px;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    background: linear-gradient(to bottom, transparent 95%, rgba(0,0,0,0.2) 100%);
+}

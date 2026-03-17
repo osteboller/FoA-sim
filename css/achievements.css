@@ -1,0 +1,6 @@
+.ach-card { background: var(--panel); border: 1px solid #333; padding: 15px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+.ach-info h4 { margin: 0 0 5px 0; color: var(--blue); }
+.ach-info p { margin: 0; font-size: 0.8rem; color: #aaa; }
+.ach-btn { background: var(--gold); color: #000; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; min-width: 100px; }
+.ach-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+.ach-btn.claimed { background: transparent; color: var(--green); border: 1px solid var(--green); cursor: default; }
