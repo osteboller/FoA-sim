@@ -161,28 +161,6 @@ function showPage(p) {
         }
 }
 
-function initHomePage() {
-    let page = document.getElementById('page-home');
-    if (!page) {
-        const workPage = document.getElementById('page-work');
-        if (workPage && workPage.parentElement) {
-            page = document.createElement('div');
-            page.id = 'page-home';
-            page.className = 'page';
-            workPage.parentElement.appendChild(page);
-        }
-    }
-    
-    if (page) {
-        page.innerHTML = `
-            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
-                <img src="assets/bgg/foassa.gif" style="max-width:100%; max-height:85vh; object-fit:contain; image-rendering:pixelated; filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); margin-bottom:30px;">
-                <button onclick="showPage('shop')" style="padding:15px 50px; background:var(--green); color:#fff; border:none; border-radius:50px; font-size:1.5rem; font-weight:bold; cursor:pointer; box-shadow:0 0 20px rgba(0,255,0,0.3); transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">START SPILLET</button>
-            </div>
-        `;
-    }
-}
-
 function rollPower(base) {
     if (base.powerRange) {
         const [min, max] = base.powerRange;
