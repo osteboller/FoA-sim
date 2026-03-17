@@ -21,7 +21,7 @@ const alienData = [
     { id: 15, name: "Slam Rock", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/slam_rock.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
     { id: 16, name: "Sumo Stumpo", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/sumo_stumpo.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
     // Dredrocks (Aliens) - Gen 2
-    { id: 17, name: "Bendzonian", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/Bendzonian.gif", release: 'gen_2', rarity: 'uncommon', powerRange: [5, 17] },
+    { id: 17, name: "Bendzonian", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/bendzonian.gif", release: 'gen_2', rarity: 'uncommon', powerRange: [5, 17] },
     { id: 18, name: "Jawbreaker", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/jawbreaker.gif", release: 'gen_2', rarity: 'uncommon', powerRange: [5, 17] },
     // Dredrocks (Aliens) - Exclusives
     { id: 19, name: "Fang Face", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/fang_face.gif", release: 'italian', rarity: 'rare', powerRange: [7, 18] },
