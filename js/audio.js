@@ -49,10 +49,30 @@ const AudioManager = {
         }
     },
     sfx: {
+        currentRiser: null,
         play: function(folder, file, ext = 'ogg') {
             const path = `assets/audio/sfx/${folder}/${file}.${ext}`;
             const audio = new Audio(path);
             audio.volume = AudioManager.settings.sfxVolume;
+            
+            // ANTI-OVERLAP: Dræb den forrige riser, når en ny starter
+            if (file.startsWith('riser-')) {
+                if (this.currentRiser) {
+                    this.currentRiser.pause();
+                    this.currentRiser.currentTime = 0;
+                }
+                this.currentRiser = audio;
+            }
+            
+            // ANTI-OVERLAP: Dræb riseren i det præcise millisekund pakken åbner (reveal)
+            if (file.startsWith('reveal-')) {
+                if (this.currentRiser) {
+                    this.currentRiser.pause();
+                    this.currentRiser.currentTime = 0;
+                    this.currentRiser = null;
+                }
+            }
+            
             audio.play().catch(e => console.warn(`SFX fejlede (${path}):`, e));
         },
         playRandom: function(folder, prefix, count, padZeros = true, ext = 'ogg') {

@@ -184,12 +184,15 @@ function navigateShop(dir) {
 }
 
 function resetShopState() {
+    document.body.style.overflow = ''; // Nulstil main scrollbar
     shopIsBusy = false;
     const container = document.getElementById('shop-batch');
     if (container) {
         container.innerHTML = "";
         container.className = 'shop-batch-grid'; // Nulstil til standard grid layout
         container.style.display = 'none'; // Sørg for at den skjules igen
+        container.style.overflowX = '';
+        container.style.overflowY = '';
     }
     
     const content = document.getElementById('shop-content');

@@ -37,6 +37,9 @@ async function openPackInteractive(items, packType) {
     // Setup container styling
     container.className = 'pack-opener-overlay';
     container.style.display = ''; // Fjerner 'display:none', så CSS klassen kan vises
+    container.style.overflowX = 'hidden'; // Dræb horisontal scrollbar under animationer
+    container.style.overflowY = 'auto'; // Tillad kun vertikal scroll, hvis pakken er meget stor
+    document.body.style.overflow = 'hidden'; // Lås baggrundens scrollbar fast
     container.innerHTML = "";
 
     // Opret Scene Wrapper (For responsivitet inden i det fuldskærms mørke overlay)
@@ -85,21 +88,25 @@ async function openPackInteractive(items, packType) {
         scene.appendChild(blisterWrapper);
 
         // 3. Animation Sequence
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier1');
         blisterImg.classList.add('tier-1-shake');
         let finalGlowFilterString = "";
         await wait(1500);
 
         if (maxTier >= 2) {
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier2');
             blisterImg.classList.add('tier-2-pulse-box');
             finalGlowFilterString = "drop-shadow(0 0 15px rgba(255, 215, 0, 0.8))";
             await wait(1500);
 
             if (maxTier >= 3) {
+                if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier3');
                 blisterImg.classList.add('tier-3-heavy-shake');
                 finalGlowFilterString = "drop-shadow(0 0 20px rgba(255, 255, 255, 0.9))";
                 await wait(2000);
 
                 if (maxTier === 4) {
+                    if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier4');
                     const secretItem = items.find(i => i.group === 'Secret' || i.release === 'secret');
                     if (secretItem) {
                         let gColor = '#ff00ff'; 
@@ -119,6 +126,7 @@ async function openPackInteractive(items, packType) {
         }
 
         // 4. Reveal
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', `reveal-tier${maxTier}`);
         blisterImg.src = "assets/shop/blister_open.gif";
         blisterImg.classList.remove('tier-1-shake', 'tier-2-pulse', 'tier-2-pulse-box', 'tier-3-heavy-shake', 'tier-4-glitch');
         
@@ -368,19 +376,25 @@ async function openPackInteractive(items, packType) {
             const isRAMM = item.type === 'metallic' || item.group === 'RAMMs';
             const isSecret = item.group === 'Secret' || item.release === 'secret';
             let finalGlowClass = '';
+            let achievedTier = 1;
 
             // TIER 1 (Kører for ALLE: Low Mutant, High Mutant, RAMM og Secret)
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier1');
             boxImg.classList.add('tier-1-shake');
             await wait(1500);
 
             if (isHighMutant || isRAMM || isSecret) {
                 // TIER 2 (Kører KUN for High Mutant, RAMM og Secret)
+                achievedTier = 2;
+                if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier2');
                 boxImg.classList.add('tier-2-pulse-box'); // Ny klasse der bruger drop-shadow
                 finalGlowClass = 'glow-tier-2';
                 await wait(1500);
 
                 if (isRAMM || isSecret) {
                     // TIER 3 (Kører KUN for RAMM og Secret - dette var vores gamle Tier 2)
+                    achievedTier = 3;
+                    if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier3');
                     boxImg.classList.add('tier-3-heavy-shake'); 
                     container.style.background = "rgba(0,0,0,0.98)"; // Darker bg
                     finalGlowClass = 'glow-tier-3';
@@ -388,6 +402,8 @@ async function openPackInteractive(items, packType) {
 
                     if (isSecret) {
                         // TIER 4 (Kører KUN for Secret Error Prints - dette var vores gamle Tier 3)
+                        achievedTier = 4;
+                        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier4');
                         
                         // Dynamic Glitch Color based on type
                         let gColor = '#ff00ff'; // fallback
@@ -406,6 +422,7 @@ async function openPackInteractive(items, packType) {
             }
 
             // OPEN! Først nu, efter alle delays er overstået.
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', `reveal-tier${achievedTier}`);
             boxImg.src = "assets/shop/mystery_box_open.gif";
             boxImg.classList.remove('tier-1-shake', 'tier-2-pulse', 'tier-2-pulse-box', 'tier-3-heavy-shake', 'tier-4-glitch');
             if (finalGlowClass) boxImg.classList.add(finalGlowClass);
@@ -421,10 +438,12 @@ async function openPackInteractive(items, packType) {
 
         else if (displayType === 'blister_special') {
             // BLISTER SPECIAL (Ingen boks, men ryst kortet)
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier2');
             el.classList.add('anim-shake-tier2');
             await wait(1500);
             el.classList.remove('anim-shake-tier2');
             el.classList.add('flipped');
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier2');
             await wait(500);
             element.classList.add('revealed');
             applyJuice();
@@ -433,11 +452,13 @@ async function openPackInteractive(items, packType) {
 
         else if (displayType === 'epic') {
             // EPIC REVEAL (SciRoids / Jangutz)
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier4');
             el.style.opacity = '1';
             announceDrop(item, 2800, packType); // Starter sammen med surge
             el.classList.add('anim-surge'); // Digital surge animation
             await wait(400); // Vent til surge dækker
             el.classList.add('flipped');
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier4');
             await wait(400);
             element.classList.add('revealed');
             applyJuice();

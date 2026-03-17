@@ -120,6 +120,16 @@ function devUnlockAll() {
 }
 
 function showPage(p) {
+    // Forhindr spilleren i at forlade arenaen under en aktiv kamp
+    const currentPage = document.querySelector('.page.active');
+    if (currentPage && currentPage.id === 'page-arena' && p !== 'arena') {
+        const arenaBattle = document.getElementById('arena-battle');
+        if (arenaBattle && arenaBattle.style.display === 'block') {
+            showAlert("Du kan ikke forlade Arenaen, mens du er i kamp! Tryk på 'GIV OP' for at trække dig, eller afslut kampen.", "Kamp Igang!");
+            return;
+        }
+    }
+
     document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
     
@@ -569,6 +579,8 @@ function checkAchievements() {
 }
 
 function showNotification(ach) {
+    if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('ui', 'message');
+
     const toast = document.createElement('div');
     toast.className = 'notification-toast';
     toast.innerHTML = `
@@ -831,6 +843,6 @@ function claimAchievement(event, id) {
         }
         document.body.appendChild(floatEl);
         setTimeout(() => floatEl.remove(), 1500);
-        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('ui', 'popup-open');
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('ui', 'trophy-claim');
     }
 }

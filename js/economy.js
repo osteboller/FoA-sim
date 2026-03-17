@@ -114,6 +114,11 @@ function buyUpgrade(taskId) {
         state.currency -= upgrade.cost;
         state.tasks[taskId].level++;
         save();
+
+        if (typeof AudioManager !== 'undefined') {
+            const rand = Math.random() < 0.5 ? '1' : '2';
+            AudioManager.sfx.play('ui', `upgrade-bought${rand}`);
+        }
     } else {
         showAlert('Du har ikke nok lommepenge til at købe denne opgradering.', 'Mangler Lommepenge');
     }
