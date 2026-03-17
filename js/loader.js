@@ -57,22 +57,47 @@ function preloadAssets() {
         typeof cardData !== 'undefined' ? cardData : []
     ];
     arrays.forEach(arr => arr.forEach(item => { if (item.img) assets.add(item.img); }));
-    const assetArray = Array.from(assets);
+    
+    const audioAssets = [
+        "assets/audio/sfx/ui/message.ogg",
+        "assets/audio/sfx/ui/trophy-claim.ogg",
+        "assets/audio/sfx/ui/upgrade-bought1.ogg",
+        "assets/audio/sfx/ui/upgrade-bought2.ogg",
+        "assets/audio/sfx/ui/popup-open.ogg",
+        "assets/audio/sfx/ui/popup-close.ogg",
+        "assets/audio/sfx/shop/riser-tier1.ogg",
+        "assets/audio/sfx/shop/riser-tier2.ogg",
+        "assets/audio/sfx/shop/riser-tier3.ogg",
+        "assets/audio/sfx/shop/riser-tier4.ogg",
+        "assets/audio/sfx/shop/reveal-tier1.ogg",
+        "assets/audio/sfx/shop/reveal-tier2.ogg",
+        "assets/audio/sfx/shop/reveal-tier3.ogg",
+        "assets/audio/sfx/shop/reveal-tier4.ogg"
+    ];
+
+    const allAssets = Array.from(assets).map(src => ({ type: 'image', src })).concat(audioAssets.map(src => ({ type: 'audio', src })));
     let loadedCount = 0;
-    const totalCount = assetArray.length;
+    const totalCount = allAssets.length;
     if (totalCount === 0) { finishLoading(); return; }
-    assetArray.forEach(src => {
-        const img = new Image();
-        img.onload = img.onerror = () => {
-            loadedCount++;
-            const pct = Math.floor((loadedCount / totalCount) * 100);
-            const bar = document.getElementById('loader-bar');
-            const text = document.getElementById('loader-text');
-            if (bar) bar.style.width = pct + '%';
-            if (text) text.innerText = `INDLÆSER ASSETS (${pct}%)`;
-            if (loadedCount === totalCount) setTimeout(finishLoading, 300);
-        };
-        img.src = src;
+
+    const updateProgress = () => {
+        loadedCount++;
+        const pct = Math.floor((loadedCount / totalCount) * 100);
+        const bar = document.getElementById('loader-bar');
+        const text = document.getElementById('loader-text');
+        if (bar) bar.style.width = pct + '%';
+        if (text) text.innerText = `INDLÆSER ASSETS (${pct}%)`;
+        if (loadedCount === totalCount) setTimeout(finishLoading, 300);
+    };
+
+    allAssets.forEach(asset => {
+        if (asset.type === 'image') {
+            const img = new Image();
+            img.onload = img.onerror = updateProgress;
+            img.src = asset.src;
+        } else {
+            fetch(asset.src).then(updateProgress).catch(updateProgress);
+        }
     });
 }
 
