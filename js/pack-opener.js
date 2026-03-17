@@ -509,7 +509,7 @@ function showBigReveal(item) {
     document.getElementById('bigName').innerText = item.name || (base ? base.name : 'ITEM');
     const pwr = item.power !== undefined ? item.power : (base && base.powerRange ? '?' : '');
     document.getElementById('bigBR').innerHTML = pwr ? "PWR: " + pwr : "";
-    document.getElementById('bigImg').src = item.img || (base ? base.img : '');
+    document.getElementById('bigImg').src = (base && base.img) ? base.img : item.img;
     document.getElementById('bigImg').style.filter = imgFilter;
     
     const statusEl = document.getElementById('bigStatus');
