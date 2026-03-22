@@ -118,6 +118,19 @@ function activateWeapon() {
                       (currentAlien.type === 'hybrid' && (currentAlien.c1 === weapon.type || currentAlien.c2 === weapon.type));
         
         if(match) {
+            if (typeof AudioManager !== 'undefined') {
+                const fName = weapon.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                AudioManager.announcer.playEventRandom([`${fName}-1`, `${fName}-2`]);
+            }
+
+            let styleStr = "";
+            if (weapon.type === 'red') styleStr = "color: var(--red); text-shadow: 0 0 20px var(--red);";
+            else if (weapon.type === 'green') styleStr = "color: var(--green); text-shadow: 0 0 20px var(--green);";
+            else if (weapon.type === 'blue') styleStr = "color: var(--blue); text-shadow: 0 0 20px var(--blue);";
+            else styleStr = "background: linear-gradient(90deg, var(--red), var(--blue), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));";
+            
+            showAnnouncement(`<span style="font-size: 3.5rem; font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: 2px; ${styleStr}">${weapon.name}!</span>`, null, 2000);
+
             if (weapon.type === 'weapon') {
                 battleState.activeWeaponBonus = 15;
                 document.getElementById('battle-log').innerHTML = `<div style="color:var(--gold); font-weight:bold;">🔫 NEUTRALIZER! ${currentAlien.name} får +15 POWER!</div>` + document.getElementById('battle-log').innerHTML;
@@ -141,6 +154,14 @@ function activatePowerPlayer() {
     if(battleState.ppUsed) { showAlert("Du har allerede brugt din Power Player i denne kamp.", "Power Player Brugt"); return; }
     if(battleState.phase !== 'matchup') { showAlert("Du kan kun bruge Power Player i 'Matchup' fasen!", "Forkert Timing"); return; }
     
+    const pp = (typeof crystaliteData !== 'undefined' ? crystaliteData.find(p => p.id == selectedPowerPlayerId) : null) || 
+               (typeof shadowData !== 'undefined' ? shadowData.find(p => p.id == selectedPowerPlayerId) : null);
+               
+    if (pp && typeof AudioManager !== 'undefined') {
+        const fName = pp.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        AudioManager.announcer.playEventRandom([`${fName}-1`, `${fName}-2`]);
+    }
+
     showAlert("Power Player aktiveret! Deres effekt vil blive implementeret i en fremtidig opdatering.", "Funktion Kommer Snart");
     battleState.ppUsed = true;
     renderBattleField();
@@ -202,7 +223,7 @@ function playNextRound(manualIndex = -1) {
             setTimeout(() => { _finalizeRound(winner, currentAlien, currentEnemy); }, 1600);
         } else {
             if (typeof AudioManager !== 'undefined') {
-                AudioManager.announcer.playEvent('power-duel');
+                AudioManager.announcer.playEventRandom(['power-duel-1', 'power-duel-2', 'power-duel-3']); // Ret evt. filnavnene her
             }
             showAnnouncement("<span style='color:var(--gold); text-shadow: 0 0 20px var(--gold);'>POWER DUEL!</span>", null, 1500);
             
@@ -283,6 +304,9 @@ function resolveRound() {
             if (pFigure) { pFigure.classList.remove('anim-fly-in', 'anim-clash-p'); void pFigure.offsetWidth; pFigure.classList.add('anim-shake'); }
             if (eFigure) { eFigure.classList.remove('anim-fly-in-enemy', 'anim-clash-e'); void eFigure.offsetWidth; eFigure.classList.add('anim-shake'); }
             showAnnouncement("<span style='color:#aaa; text-shadow:0 0 20px #fff;'>UAFGJORT</span>", null, 2000);
+            if (typeof AudioManager !== 'undefined') {
+                AudioManager.announcer.playEventRandom(['draw-1', 'draw-2']);
+            }
         }
 
         setTimeout(() => _finalizeRound(winner, pFig, eFig), 1200);
@@ -377,8 +401,10 @@ function endMatch() {
     logEl.innerHTML = logMsg + "<div style='margin-top:8px; padding-top:8px; border-top:1px solid #333; opacity:0.6;'>" + logEl.innerHTML + "</div>";
     if (bottomControls) bottomControls.innerHTML = "";
 
+    const outcome = isWin ? 'win' : (battleState.enemyScore > battleState.playerScore ? 'lose' : 'draw');
+
     showMatchResultOverlay(
-        isWin,
+        outcome,
         () => { currentArenaView = 'builder'; initArena(); save(); },
         () => { currentArenaView = 'levels'; initArena(); save(); },
         () => { startBattle(); },

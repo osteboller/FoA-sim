@@ -1,5 +1,5 @@
 let shopIsBusy = false;
-let currentPackIndex = 1;
+let currentPackIndex = 3;
 let isAnimating = false;
 let DEV_MODE = false;
 
@@ -30,6 +30,28 @@ const shopPacks = [
         currency: 'Kr.',
         img: 'assets/shop/blister_pack.gif',
         color: '#444'
+    },
+    {
+        id: 'blister_it',
+        name: 'ITALIENSK BLISTER',
+        desc: '2 Aliens (Italienske Exclusives)',
+        cost: 25,
+        currency: 'Kr.',
+        img: 'assets/shop/blister_pack_it.gif',
+        color: '#009246',
+        reqLevel: 16,
+        reqText: 'Låses op i Italien (Niveau 16)'
+    },
+    {
+        id: 'blister_jp',
+        name: 'JAPANSK BLISTER',
+        desc: '2 Aliens (Japanske Exclusives)',
+        cost: 25,
+        currency: 'Kr.',
+        img: 'assets/shop/blister_pack_jp.gif',
+        color: '#bc002d',
+        reqLevel: 16,
+        reqText: 'Låses op i Italien (Niveau 16)'
     },
     {
         id: 'battle',
@@ -226,22 +248,24 @@ function buyPack(type) {
     
     const currentLevel = state.maxLevel || 1;
     const gen2Unlocked = currentLevel >= 11;
+    const activeRelease = gen2Unlocked ? 'gen_2' : 'gen_1';
     
     // Filter pools: Exclude all exclusives from normal packs
     const filterPool = (a) => {
         // Liste over releases, der IKKE skal kunne trækkes i standard pakker
         const exclusiveReleases = ['secret', 'japanese', 'italian', 'us', 'special_edition', 'jangutz_exclusive', 'battle_ship_exclusive'];
-        if (exclusiveReleases.includes(a.release)) return false;
+        const releases = a.releases || [a.release];
+        if (releases.some(r => exclusiveReleases.includes(r))) return false;
 
         // Lås Gen 2 figurer indtil spilleren når det korrekte niveau
-        if (a.release === 'gen_2' && !gen2Unlocked) return false;
+        if (!releases.includes(activeRelease)) return false;
         return true;
     };
 
     const standardPool = alienData.filter(a => a.group !== 'Mutants' && a.group !== 'RAMMs' && filterPool(a));
     const mutantPool = alienData.filter(a => a.group === 'Mutants' && filterPool(a));
     const rammPool = alienData.filter(a => a.group === 'RAMMs' && filterPool(a));
-    const secretPool = alienData.filter(a => a.release === 'secret');
+    const secretPool = alienData.filter(a => a.releases ? a.releases.includes('secret') : a.release === 'secret');
 
     // Hold styr på trukne figurer i denne pakke for at undgå dubletter
     const drawnMutants = new Set();
@@ -306,7 +330,7 @@ function buyPack(type) {
     if (type === 'battleship') {
         // 1. Find 2 Sciroids (IDs 63, 64)
         const sciroids = alienData.filter(a => a.group === 'Sciroids');
-        sciroids.forEach(s => itemsToReveal.push(addAlienToInventory(s)));
+        sciroids.forEach(s => itemsToReveal.push(addAlienToInventory(s, 'battle_ship_exclusive')));
 
         // 2. Find 1 Neutralizer (ID 407)
         const neutralizerBase = weaponData.find(w => w.id === 407);
@@ -342,8 +366,8 @@ function buyPack(type) {
 
     } else if (type === 'war') {
         // 7 Aliens, 2 Mutants, 1 PP, 2 Weapons, 2 Cards
-        for(let i=0; i<7; i++) itemsToReveal.push(addAlienToInventory(getRandomStandard()));
-        for(let i=0; i<2; i++) itemsToReveal.push(addAlienToInventory(getRandomMutantOrRamm()));
+        for(let i=0; i<7; i++) itemsToReveal.push(addAlienToInventory(getRandomStandard(), activeRelease));
+        for(let i=0; i<2; i++) itemsToReveal.push(addAlienToInventory(getRandomMutantOrRamm(), activeRelease));
         
         // PP
         const ppPool = [...crystaliteData, ...shadowData].filter(p => p.release === 'gen_1' || (gen2Unlocked && p.release === 'gen_2'));
@@ -353,7 +377,7 @@ function buyPack(type) {
         itemsToReveal.push(ppItem);
 
         // Weapons
-        let wPool = weaponData.filter(w => w.release !== 'bs_ex');
+        let wPool = weaponData.filter(w => w.release !== 'bs_ex' && (w.release === 'gen_1' || (gen2Unlocked && w.release === 'gen_2')));
         for(let i=0; i<2; i++) {
             if (wPool.length === 0) break; // Sikkerhed hvis puljen er tom
             const w = wPool[Math.floor(Math.random() * wPool.length)];
@@ -381,8 +405,8 @@ function buyPack(type) {
 
     } else if (type === 'pod') {
         // 4 Aliens, 2 Mutants, 1 Pod
-        for(let i=0; i<4; i++) itemsToReveal.push(addAlienToInventory(getRandomStandard()));
-        for(let i=0; i<2; i++) itemsToReveal.push(addAlienToInventory(getRandomMutantOrRamm()));
+        for(let i=0; i<4; i++) itemsToReveal.push(addAlienToInventory(getRandomStandard(), activeRelease));
+        for(let i=0; i<2; i++) itemsToReveal.push(addAlienToInventory(getRandomMutantOrRamm(), activeRelease));
         
         const colors = ['red', 'green', 'blue'];
         const color = colors[Math.floor(Math.random() * colors.length)];
@@ -403,8 +427,8 @@ function buyPack(type) {
 
     } else if (type === 'battle') {
         // 4 Aliens, 1 Mutant
-        for(let i=0; i<4; i++) itemsToReveal.push(addAlienToInventory(getRandomStandard()));
-        itemsToReveal.push(addAlienToInventory(getRandomMutantOrRamm()));
+        for(let i=0; i<4; i++) itemsToReveal.push(addAlienToInventory(getRandomStandard(), activeRelease));
+        itemsToReveal.push(addAlienToInventory(getRandomMutantOrRamm(), activeRelease));
         
         // 1 Card
         const cPool = cardData;
@@ -417,11 +441,22 @@ function buyPack(type) {
             status: isNew ? 'NEW' : 'DUP',
             power: undefined
         });
-    } else {
-        // Blister: 2 Aliens
+    } else if (type.startsWith('blister')) {
+        // Blister Packs: 2 Aliens
+        const isIt = type === 'blister_it';
+        const isJp = type === 'blister_jp';
+        const region = isIt ? 'italian' : (isJp ? 'japanese' : null);
+        
+        let regionAliens = [];
+        let regionRamm = [];
+        if (region) {
+             regionAliens = alienData.filter(a => (a.releases || [a.release]).includes(region) && a.group !== 'RAMMs');
+             regionRamm = alienData.filter(a => (a.releases || [a.release]).includes(region) && a.group === 'RAMMs');
+        }
+
         for(let i=0; i<2; i++) {
             let itemToAdd = null;
-            if (DEV_MODE) {
+            if (DEV_MODE && !region) {
                  // 20% Mutant, 20% RAMM, 20% Secret, 40% Standard
                  const r = Math.random();
                  if (r < 0.20 && mutantPool.length > 0) {
@@ -442,6 +477,15 @@ function buyPack(type) {
                      itemToAdd = pool[Math.floor(Math.random() * pool.length)];
                      drawnSecrets.add(itemToAdd.id);
                  }
+            } else if (region) {
+                 const r = Math.random();
+                 if (r < 0.05 && regionRamm.length > 0) { 
+                     itemToAdd = regionRamm[0]; // 5% chance for Regional RAMM
+                 } else if (r < 0.25 && regionAliens.length > 0) { 
+                     itemToAdd = regionAliens[Math.floor(Math.random() * regionAliens.length)]; // 20% chance for Regional Alien
+                 } else if (r < 0.30) { 
+                     itemToAdd = getRandomMutantOrRamm(); // 5% chance for Standard Special
+                 }
             } else {
                 if (Math.random() < 0.05) itemToAdd = getRandomMutantOrRamm();
             }
@@ -449,12 +493,13 @@ function buyPack(type) {
             if (itemToAdd) {
                 // Tjek for dubletter i denne pakke (selvom det er usandsynligt med pools)
                 if (itemsToReveal.some(existing => existing.id === itemToAdd.id)) {
-                    itemsToReveal.push(addAlienToInventory(getRandomStandard()));
+                    itemsToReveal.push(addAlienToInventory(getRandomStandard(), activeRelease));
                 } else {
-                    itemsToReveal.push(addAlienToInventory(itemToAdd));
+                    const actualRelease = itemToAdd.releases ? itemToAdd.releases[0] : (itemToAdd.release || activeRelease);
+                    itemsToReveal.push(addAlienToInventory(itemToAdd, actualRelease));
                 }
             } else {
-                itemsToReveal.push(addAlienToInventory(getRandomStandard()));
+                itemsToReveal.push(addAlienToInventory(getRandomStandard(), activeRelease));
             }
         }
     }

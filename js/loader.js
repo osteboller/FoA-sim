@@ -47,7 +47,10 @@ function preloadAssets() {
         "assets/shop/cousin_br_evil.gif", "assets/shop/mystery_box.gif", "assets/shop/mystery_box_open.gif",
         "assets/shop/blister_closed.gif", "assets/shop/blister_open.gif", "assets/shop/battle_pack.gif",
         "assets/shop/space_pod_pack.gif", "assets/shop/war_pack.gif", "assets/shop/sciroid_battleship_box.gif",
-        "assets/shop/special_edition_ramm_set.gif", "assets/shop/jangutz_pack.gif", "assets/img/3aliens.gif"
+        "assets/shop/special_edition_ramm_set.gif", "assets/shop/jangutz_pack.gif", "assets/img/3aliens.gif",
+        "assets/shop/blister_pack_it.gif", "assets/shop/blister_open_it.gif",
+        "assets/shop/blister_pack_jp.gif", "assets/shop/blister_open_jp.gif",
+        "assets/shop/blister_pack_us.gif", "assets/shop/blister_open_us.gif"
     ];
     staticAssets.forEach(src => assets.add(src));
     if (typeof workGifs !== 'undefined') workGifs.forEach(gif => assets.add(gif));
@@ -72,7 +75,28 @@ function preloadAssets() {
         "assets/audio/sfx/shop/reveal-tier1.ogg",
         "assets/audio/sfx/shop/reveal-tier2.ogg",
         "assets/audio/sfx/shop/reveal-tier3.ogg",
-        "assets/audio/sfx/shop/reveal-tier4.ogg"
+        "assets/audio/sfx/shop/reveal-tier4.ogg",
+        "assets/audio/sfx/shop/swipe-01.ogg",
+        "assets/audio/sfx/shop/swipe-02.ogg",
+        // BGM
+        "assets/audio/bgm/bgm-general.ogg",
+        "assets/audio/bgm/shop-theme.ogg",
+        "assets/audio/bgm/draft-theme.ogg",
+        "assets/audio/bgm/battle-theme.ogg",
+        "assets/audio/bgm/defeat.ogg",
+        // Battle SFX
+        "assets/audio/sfx/battle/swush-01.ogg", "assets/audio/sfx/battle/swush-02.ogg",
+        "assets/audio/sfx/battle/swush-03.ogg", "assets/audio/sfx/battle/swush-04.ogg",
+        "assets/audio/sfx/battle/swush-05.ogg", "assets/audio/sfx/battle/swush-06.ogg",
+        "assets/audio/sfx/battle/hit-01.ogg", "assets/audio/sfx/battle/hit-02.ogg",
+        "assets/audio/sfx/battle/hit-03.ogg", "assets/audio/sfx/battle/hit-04.ogg",
+        "assets/audio/sfx/battle/hit-05.ogg", "assets/audio/sfx/battle/hit-06.ogg",
+        // Announcer System/Combat
+        "assets/audio/announcer/results/victory-1.ogg", "assets/audio/announcer/results/victory-2.ogg",
+        "assets/audio/announcer/results/defeat-1.ogg", "assets/audio/announcer/results/defeat-2.ogg", "assets/audio/announcer/results/defeat-3.ogg",
+        "assets/audio/announcer/results/no-winner.ogg",
+        "assets/audio/announcer/combat/power-duel-1.ogg", "assets/audio/announcer/combat/power-duel-2.ogg", "assets/audio/announcer/combat/power-duel-3.ogg",
+        "assets/audio/announcer/combat/draw-1.ogg", "assets/audio/announcer/combat/draw-2.ogg"
     ];
 
     const allAssets = Array.from(assets).map(src => ({ type: 'image', src })).concat(audioAssets.map(src => ({ type: 'audio', src })));

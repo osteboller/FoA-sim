@@ -125,8 +125,20 @@ function showPage(p) {
     if (currentPage && currentPage.id === 'page-arena' && p !== 'arena') {
         const arenaBattle = document.getElementById('arena-battle');
         if (arenaBattle && arenaBattle.style.display === 'block') {
-            showAlert("Du kan ikke forlade Arenaen, mens du er i kamp! Tryk på 'GIV OP' for at trække dig, eller afslut kampen.", "Kamp Igang!");
-            return;
+            // Tjek om kampen rent faktisk er afsluttet
+            let isGameOver = false;
+            if (typeof battleState !== 'undefined' && battleState) {
+                isGameOver = battleState.playerScore >= 4 || battleState.enemyScore >= 4 || battleState.round >= 7;
+            }
+            
+            // Hvis kampen IKKE er slut endnu, blokerer vi navigationen
+            if (!isGameOver) {
+                showAlert("Du kan ikke forlade Arenaen, mens du er i kamp! Tryk på 'GIV OP' for at trække dig, eller afslut kampen.", "Kamp Igang!");
+                return;
+            } else {
+                // Kampen er slut - sørg for at gemme deres belønning før de navigerer væk!
+                save();
+            }
         }
     }
 
@@ -171,9 +183,14 @@ function showPage(p) {
         }
 }
 
-function rollPower(base) {
-    if (base.powerRange) {
-        const [min, max] = base.powerRange;
+function rollPower(base, drawnRelease = null) {
+    let pr = base.powerRange;
+    if (base.powerRanges) {
+        pr = (drawnRelease && base.powerRanges[drawnRelease]) ? base.powerRanges[drawnRelease] : Object.values(base.powerRanges)[0];
+    }
+    
+    if (pr) {
+        const [min, max] = pr;
         const weightedRandom = Math.pow(Math.random(), 2); 
         const power = Math.floor(weightedRandom * (max - min + 1)) + min;
         return power;
@@ -184,13 +201,18 @@ function rollPower(base) {
 function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 // --- GLOBAL HELPERS (Moved from shop.js) ---
-function addAlienToInventory(base) {
+function addAlienToInventory(base, drawnRelease = null) {
     if (!base) return null;
+    
+    let actualRelease = drawnRelease;
+    if (!base.releases?.includes(actualRelease) && base.releases) actualRelease = base.releases[0];
+    if (!actualRelease) actualRelease = base.release;
+    
     const isNew = !state.ownedAliens.some(a => a.id === base.id);
     const newItem = {
         instanceId: Date.now() + Math.random(), id: base.id, name: base.name, type: base.type,
-        c1: base.c1, c2: base.c2, power: rollPower(base), img: base.img, locked: false,
-        group: base.group, rarity: base.rarity, release: base.release // Ensure these properties exist
+        c1: base.c1, c2: base.c2, power: rollPower(base, actualRelease), img: base.img, locked: false,
+        group: base.group, rarity: base.rarity, release: actualRelease
     };
     state.ownedAliens.push(newItem);
     
@@ -207,11 +229,23 @@ function addAlienToInventory(base) {
     return newItem;
 }
 
-function createItemInstance(base) {
+function createItemInstance(base, drawnRelease = null) {
      if (!base) return null;
+     let actualRelease = drawnRelease;
+     if (!base.releases?.includes(actualRelease) && base.releases) actualRelease = base.releases[0];
+     if (!actualRelease) actualRelease = base.release;
+
+     // Tjek om vi allerede ejer udstyret
+     let isNew = true;
+     if (base.group === 'Weapons') {
+         isNew = !state.ownedWeapons.some(w => w.id === base.id);
+     } else if (base.group === 'Crystalites' || base.group === 'Shadows') {
+         isNew = !state.ownedCrystalites.some(p => p.id === base.id) && !(state.ownedShadows && state.ownedShadows.some(p => p.id === base.id));
+     }
+
      return {
         instanceId: Date.now() + Math.random(), id: base.id, name: base.name, type: base.type,
-        img: base.img, locked: false, power: 0, release: base.release, status: 'NEW',
+        img: base.img, locked: false, power: 0, release: actualRelease, status: isNew ? 'NEW' : 'DUP',
         group: base.group, rarity: base.rarity // Tilføjet så Pack Opener kan sortere korrekt
     };
 }
@@ -476,6 +510,51 @@ document.addEventListener('DOMContentLoaded', () => {
         const vBgm = document.getElementById('vol-bgm'); if (vBgm) vBgm.value = AudioManager.settings.bgmVolume;
         const vSfx = document.getElementById('vol-sfx'); if (vSfx) vSfx.value = AudioManager.settings.sfxVolume;
         const vAnn = document.getElementById('vol-announcer'); if (vAnn) vAnn.value = AudioManager.settings.announcerVolume;
+        
+        // --- QUICK AUDIO MUTE CONTROLS ---
+        const style = document.createElement('style');
+        style.innerHTML = `
+            #quick-audio-controls {
+                position: fixed; top: 15px; right: 20px; display: flex; gap: 10px; z-index: 9999;
+            }
+            .quick-mute-btn {
+                background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff; width: 45px; height: 45px; 
+                border-radius: 50%; font-size: 1.2rem; cursor: pointer; transition: 0.2s; 
+                display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+                position: relative;
+            }
+            .quick-mute-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
+            .quick-mute-btn.muted { border-color: var(--red); color: #666; }
+            .quick-mute-btn.muted::after {
+                content: ''; position: absolute; width: 60%; height: 3px; background-color: var(--red);
+                transform: rotate(-45deg); border-radius: 2px; box-shadow: 0 0 5px rgba(0,0,0,0.8);
+            }
+            @media (max-width: 768px) {
+                #quick-audio-controls { right: 15px; top: 15px; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        const qacContainer = document.createElement('div');
+        qacContainer.id = 'quick-audio-controls';
+        
+        const createMuteBtn = (type, icon, title) => {
+            const btn = document.createElement('button');
+            const isMuted = AudioManager.settings[type + 'Muted'];
+            btn.className = 'quick-mute-btn' + (isMuted ? ' muted' : '');
+            btn.innerHTML = icon;
+            btn.title = title;
+            
+            btn.onclick = () => {
+                const muted = AudioManager.toggleMute(type);
+                btn.className = 'quick-mute-btn' + (muted ? ' muted' : '');
+            };
+            return btn;
+        };
+        
+        qacContainer.appendChild(createMuteBtn('bgm', '🎵', 'Slå musik til/fra'));
+        qacContainer.appendChild(createMuteBtn('sfx', '🔊', 'Slå lydeffekter til/fra'));
+        document.body.appendChild(qacContainer);
     }
     
     // Start på Home siden
@@ -501,7 +580,8 @@ function getAchievementProgress(ach) {
         const uniqueOwnedOfRarity = new Set();
         state.ownedAliens.forEach(owned => {
             const base = alienData.find(a => a.id === owned.id);
-            if (base && (base.rarity === rarity || (rarity === 'secret' && base.release === 'secret'))) {
+            const isSecretRelease = base ? (base.releases ? base.releases.includes('secret') : base.release === 'secret') : false;
+            if (base && (base.rarity === rarity || (rarity === 'secret' && isSecretRelease))) {
                 uniqueOwnedOfRarity.add(owned.id);
             }
         });
@@ -513,7 +593,8 @@ function getAchievementProgress(ach) {
         state.ownedAliens.forEach(owned => {
             const base = alienData.find(a => a.id === owned.id);
             if (base) {
-                if (group === 'Monos' && base.release === 'secret') {
+                const isSecretRelease = base.releases ? base.releases.includes('secret') : base.release === 'secret';
+                if (group === 'Monos' && isSecretRelease) {
                     uniqueOwnedOfGroup.add(owned.id);
                 } else if (base.group === group) {
                     uniqueOwnedOfGroup.add(owned.id);
@@ -544,9 +625,11 @@ function getAchievementProgress(ach) {
         let count = 0;
         state.ownedAliens.forEach(owned => {
             const base = alienData.find(a => a.id === owned.id);
-            if (base && base.powerRange && owned.power === base.powerRange[1]) {
-                count++;
-            }
+            let maxBasePower = -1;
+            if (base && base.powerRanges && base.powerRanges[owned.release]) maxBasePower = base.powerRanges[owned.release][1];
+            else if (base && base.powerRange) maxBasePower = base.powerRange[1];
+            
+            if (maxBasePower !== -1 && owned.power === maxBasePower) count++;
         });
         progress = count;
     }
@@ -721,7 +804,7 @@ function renderAchievements() {
     // Udvidet for at inkludere alle trofæ-typer
     const categories = {
         'economy': { title: 'Økonomi & Slid', icon: '💰', types: ['clicks', 'dust', 'upgrades_total', 'upgrades_manual', 'upgrades_passive'] },
-        'collection': { title: 'Mester Samler', icon: '📖', types: ['collection', 'rarity_rare', 'rarity_legendary', 'rarity_mythic', 'group_Bluespews', 'group_Dredrocks', 'group_Gangreens', 'group_RAMMs', 'group_Mutants', 'max_power'] },
+        'collection': { title: 'Mester Samler', icon: '📖', types: ['collection', 'rarity_rare', 'rarity_legendary', 'rarity_mythic', 'group_Bluspews', 'group_Dredrocks', 'group_Gangreens', 'group_RAMMs', 'group_Mutants', 'max_power'] },
         'arena': { title: 'Gladiator', icon: '⚔️', types: ['wins', 'level', 'losses'] },
         'secrets': { title: 'Hemmeligheder', icon: '👻', types: ['rarity_secret', 'group_Monos'] }
     };

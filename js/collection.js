@@ -75,17 +75,17 @@ function updateCollection() {
 
         // 4. Mutants
         const mutantOrder = [31, 32, 33, 40, 39, 36, 35, 41, 37, 38, 34, 42];
-        renderSection(album, "Mutants", sortWithOrder(alienData.filter(a => a.group === "Mutants" && a.release !== 'secret'), mutantOrder), false, "row-grid grid-4-col");
+        renderSection(album, "Mutants", sortWithOrder(alienData.filter(a => a.group === "Mutants" && !(a.releases ? a.releases.includes('secret') : a.release === 'secret')), mutantOrder), false, "row-grid grid-4-col");
 
         // 5. Error Prints (Secret)
-        const secrets = alienData.filter(a => a.release === 'secret');
+        const secrets = alienData.filter(a => a.releases ? a.releases.includes('secret') : a.release === 'secret');
         renderSection(album, "Secret Error Prints", secrets, false, "row-grid grid-6-col");
 
         // 6. RAMMs (Standard)
-        renderSection(album, "RAMMs (Metallic Mutants)", alienData.filter(a => a.group === "RAMMs" && a.release !== 'special_edition'), false, "row-grid grid-3-col");
+        renderSection(album, "RAMMs (Metallic Mutants)", alienData.filter(a => a.group === "RAMMs" && !(a.releases ? a.releases.includes('special_edition') : a.release === 'special_edition')), false, "row-grid grid-3-col");
 
         // 7. Special Edition RAMM Set
-        renderSection(album, "Special Edition RAMM Set", alienData.filter(a => a.release === 'special_edition'), false, "row-grid grid-3-col");
+        renderSection(album, "Special Edition RAMM Set", alienData.filter(a => a.releases ? a.releases.includes('special_edition') : a.release === 'special_edition'), false, "row-grid grid-3-col");
 
         // 8. Power Players
         renderSection(album, "Power Players: Crystalites", crystaliteData, true, "row-grid grid-3-col");
@@ -179,7 +179,8 @@ function openDetail(id) {
     const bigImg = bigFigure.querySelector('img');
     if(bigImg) { bigImg.style.width = "200px"; bigImg.style.height = "200px"; }
 
-    const releaseLabel = base.release === 'gen_1' ? 'Gen 1' : (base.release === 'gen_2' ? 'Gen 2' : base.release.toUpperCase());
+    const rList = base.releases || [base.release];
+    const releaseLabel = rList.map(r => r === 'gen_1' ? 'Gen 1' : (r === 'gen_2' ? 'Gen 2' : (r ? r.toUpperCase() : ''))).join(' & ');
     content.innerHTML = `
         <div class="detail-layout">
             <div class="detail-left" id="detail-art-container"></div>

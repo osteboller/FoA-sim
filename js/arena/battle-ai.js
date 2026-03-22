@@ -8,19 +8,32 @@ function generateEnemy(level) {
         const isMutant = (i === mutantIndex);
         
         // Filtrer puljen baseret på niveau (Progression)
-        const pool = alienData.filter(a => {
+        let pool = alienData.filter(a => {
             const typeMatch = isMutant ? (a.group === 'Mutants' || a.group === 'RAMMs') : (a.group !== 'Mutants' && a.group !== 'RAMMs');
             if (!typeMatch) return false;
             
+            // Hent releases sikkert (understøtter både array og string format)
+            const releases = a.releases || [a.release];
+
             // Figurer, der ALDRIG skal være modstandere (kun spiller-eksklusive)
             const trulyExclusive = ['secret', 'special_edition', 'jangutz_exclusive', 'battle_ship_exclusive'];
-            if (trulyExclusive.includes(a.release)) return false;
+            if (releases.some(r => trulyExclusive.includes(r))) return false;
 
             if (level <= 20 && a.group === 'Sciroids') return false; // Sciroids er kun for level > 20
-            if (level < 11 && a.release === 'gen_2') return false; // Ingen Gen 2 før lvl 11
-            if (level < 16 && ['japanese', 'italian', 'us'].includes(a.release)) return false; // Ingen Exclusives før lvl 16
+            
+            // Tjek mod progressionen
+            if (level < 11 && releases.includes('gen_2') && !releases.includes('gen_1')) return false; // Kun rene Gen 2 afvises før lvl 11
+            const regionExclusives = ['japanese', 'italian', 'us'];
+            if (level < 16 && releases.some(r => regionExclusives.includes(r))) return false; // Ingen Regionale Exclusives før lvl 16
+            
             return true;
         });
+
+        // Fjern dem vi allerede har valgt for at undgå fremkomsten af kloner
+        const availableInPool = pool.filter(a => !squad.some(s => s.id === a.id));
+        if (availableInPool.length > 0) {
+            pool = availableInPool;
+        }
 
         const base = pool[Math.floor(Math.random() * pool.length)];
         

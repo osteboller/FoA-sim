@@ -26,7 +26,7 @@ function announceClash(winner, currentAlien, currentEnemy) {
             const c2 = (base && base.c2) ? base.c2 : fighter.c2;
             return { name: "MUTANT", cssClass: "fighter-style-mutant", inline: `background: linear-gradient(90deg, var(--${c1}), var(--${c2})); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none;` };
         }
-        const names = { 'red': 'DREDROCK', 'green': 'GANGREEN', 'blue': 'MUTOID' };
+        const names = { 'red': 'DREDROCK', 'green': 'GANGREEN', 'blue': 'BLUSPEW' };
         const cssClasses = { 'red': 'fighter-style-red', 'green': 'fighter-style-green', 'blue': 'fighter-style-blue' };
         return { 
             name: names[fighter.type] || fighter.name.toUpperCase(), 
@@ -76,19 +76,27 @@ function announceClash(winner, currentAlien, currentEnemy) {
     }, 600);
 }
 
-function showMatchResultOverlay(isWin, btnBuildCallback, btnCampaignCallback, btnRetryCallback, btnNextCallback) {
+function showMatchResultOverlay(outcome, btnBuildCallback, btnCampaignCallback, btnRetryCallback, btnNextCallback) {
     const centerOverlay = document.getElementById('battle-center-overlay');
     centerOverlay.style.display = 'flex';
     centerOverlay.classList.add('result-overlay-active');
     centerOverlay.innerHTML = '';
     
-    // 2. Integreret System Audio!
+    // 2. Integreret System Audio med variationer!
     if (typeof AudioManager !== 'undefined') {
-        AudioManager.announcer.playSystem(isWin ? 'victory' : 'defeat');
+        if (outcome === 'win') {
+            AudioManager.announcer.playSystemRandom(['victory-1', 'victory-2']);
+        } else if (outcome === 'lose') {
+            AudioManager.announcer.playSystemRandom(['defeat-1', 'defeat-2', 'defeat-3']);
+        } else if (outcome === 'draw') {
+            AudioManager.announcer.playSystem('no-winner');
+        }
     }
 
     const btnContainer = document.createElement('div');
     btnContainer.className = "result-btn-container";
+
+    const isWin = outcome === 'win';
 
     btnContainer.innerHTML = `
         <button class="result-btn btn-build">SAML HOLD</button>

@@ -31,6 +31,7 @@ function resetTilt(e) {
 }
 
 async function openPackInteractive(items, packType) {
+    packType = packType || '';
     const container = document.getElementById('shop-batch');
     if (!container) return;
 
@@ -48,11 +49,12 @@ async function openPackInteractive(items, packType) {
     container.appendChild(scene);
 
     // --- BLISTER PACK LOGIC ---
-    if (packType === 'blister') {
+    if (packType.startsWith('blister')) {
         // 1. Calculate Max Tier
         let maxTier = 1;
         for (const item of items) {
-            if (item.group === 'Secret' || item.release === 'secret') {
+            const isSecret = item.group === 'Secret' || item.release === 'secret' || (item.releases && item.releases.includes('secret'));
+            if (isSecret) {
                 maxTier = 4;
             } else if ((item.group === 'RAMMs' || item.type === 'metallic') && maxTier < 3) {
                 maxTier = 3;
@@ -66,8 +68,22 @@ async function openPackInteractive(items, packType) {
         const blisterWrapper = document.createElement('div');
         blisterWrapper.className = 'blister-wrapper';
 
+        let closedImgSrc = "assets/shop/blister_closed.gif";
+        let openImgSrc = "assets/shop/blister_open.gif";
+        
+        if (packType === 'blister_it') {
+            closedImgSrc = "assets/shop/blister_pack_it.gif";
+            openImgSrc = "assets/shop/blister_open_it.gif";
+        } else if (packType === 'blister_jp') {
+            closedImgSrc = "assets/shop/blister_pack_jp.gif";
+            openImgSrc = "assets/shop/blister_open_jp.gif";
+        } else if (packType === 'blister_us') {
+            closedImgSrc = "assets/shop/blister_pack_us.gif";
+            openImgSrc = "assets/shop/blister_open_us.gif";
+        }
+
         const blisterImg = document.createElement('img');
-        blisterImg.src = "assets/shop/blister_closed.gif";
+        blisterImg.src = closedImgSrc;
         blisterImg.className = 'blister-main-img';
         
         blisterWrapper.appendChild(blisterImg);
@@ -127,7 +143,7 @@ async function openPackInteractive(items, packType) {
 
         // 4. Reveal
         if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', `reveal-tier${maxTier}`);
-        blisterImg.src = "assets/shop/blister_open.gif";
+        blisterImg.src = openImgSrc;
         blisterImg.classList.remove('tier-1-shake', 'tier-2-pulse', 'tier-2-pulse-box', 'tier-3-heavy-shake', 'tier-4-glitch');
         
         // Sæt den endelige filter-stil, der kombinerer mørk baggrund med den opnåede glød
@@ -243,7 +259,7 @@ async function openPackInteractive(items, packType) {
         // Bestem visningstype
         let displayType = 'flip'; // Standard
         if (isMajorSpecial(item)) {
-            if (packType === 'blister') displayType = 'blister_special';
+            if (packType.startsWith('blister')) displayType = 'blister_special';
             else if (item.group === 'Sciroids' || item.group === 'E-ramm' || item.release === 'special_edition') displayType = 'epic';
             else displayType = 'box';
         } else if (isSpecial(item)) {
@@ -485,7 +501,17 @@ function showCloseButton(packType, sceneContainer) {
         if(container) container.innerHTML = "";
         if(typeof setShopBusy === 'function') setShopBusy(false);
         
-        const success = buyPack(packType);
+        let success = false;
+        if (packType === 'blister_us') {
+            success = typeof buyVaultPack === 'function' ? buyVaultPack() : false;
+        } else if (packType === 'elite_ramm') {
+            success = typeof buyElitePack === 'function' ? buyElitePack() : false;
+        } else if (packType === 'elite_jangutz') {
+            success = typeof buyJangutzPack === 'function' ? buyJangutzPack() : false;
+        } else {
+            success = typeof buyPack === 'function' ? buyPack(packType) : false;
+        }
+        
         if (!success) resetShopState();
     };
     
@@ -571,7 +597,8 @@ function showBigReveal(item) {
     if(item.type === 'pod') { bar.style.background = item.color || '#444'; }
     
     document.getElementById('bigTL').innerText = item.id ? `#${item.id}` : (item.type === 'pod' ? 'POD' : '');
-    document.getElementById('bigTR').innerText = base && base.release ? base.release.toUpperCase() : (item.type === 'pod' ? 'RESOURCE' : "ITEM");
+    const displayRelease = item.release || (base && (base.releases ? base.releases[0] : base.release));
+    document.getElementById('bigTR').innerText = displayRelease ? displayRelease.toUpperCase() : (item.type === 'pod' ? 'RESOURCE' : "ITEM");
 }
 
 function closeReveal() { 

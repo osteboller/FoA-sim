@@ -4,7 +4,9 @@ const AudioManager = {
     settings: { 
         bgmVolume: savedAudioSettings.bgmVolume !== undefined ? savedAudioSettings.bgmVolume : 0.8,
         sfxVolume: savedAudioSettings.sfxVolume !== undefined ? savedAudioSettings.sfxVolume : 0.7,
-        announcerVolume: savedAudioSettings.announcerVolume !== undefined ? savedAudioSettings.announcerVolume : 0.6
+        announcerVolume: savedAudioSettings.announcerVolume !== undefined ? savedAudioSettings.announcerVolume : 0.6,
+        bgmMuted: savedAudioSettings.bgmMuted || false,
+        sfxMuted: savedAudioSettings.sfxMuted || false
     },
     
     updateVolume: function(type, value) {
@@ -17,6 +19,17 @@ const AudioManager = {
         }
     },
 
+    toggleMute: function(type) {
+        const isMuted = !this.settings[type + 'Muted'];
+        this.settings[type + 'Muted'] = isMuted;
+        localStorage.setItem('foa_audio_settings', JSON.stringify(this.settings));
+        
+        if (type === 'bgm' && this.bgm.current) {
+            this.bgm.current.mute(isMuted);
+        }
+        return isMuted;
+    },
+
     announcer: {
         getKey: function(alien) {
             if (!alien) return 'alien';
@@ -26,10 +39,12 @@ const AudioManager = {
             if (alien.type === 'hybrid') return 'mutant';
             if (alien.type === 'red') return 'dredrock';
             if (alien.type === 'green') return 'gangreen';
-            if (alien.type === 'blue') return 'mutoid';
+            if (alien.type === 'blue') return 'bluspew';
             return 'alien';
         },
         _play: function(path) {
+            if (AudioManager.settings.sfxMuted) return;
+            
             const sound = new Howl({
                 src: [path],
                 volume: AudioManager.settings.announcerVolume
@@ -44,14 +59,24 @@ const AudioManager = {
         playSystem: function(effect) {
             this._play(`assets/audio/announcer/results/${effect}.ogg`);
         },
+        playSystemRandom: function(variations) {
+            const file = variations[Math.floor(Math.random() * variations.length)];
+            this._play(`assets/audio/announcer/results/${file}.ogg`);
+        },
         playEvent: function(effect) {
             this._play(`assets/audio/announcer/combat/${effect}.ogg`);
+        },
+        playEventRandom: function(variations) {
+            const file = variations[Math.floor(Math.random() * variations.length)];
+            this._play(`assets/audio/announcer/combat/${file}.ogg`);
         }
     },
 
     sfx: {
         currentRiser: null,
         play: function(folder, file, ext = 'ogg') {
+            if (AudioManager.settings.sfxMuted) return;
+            
             const path = `assets/audio/sfx/${folder}/${file}.${ext}`;
             
             const sound = new Howl({
@@ -111,6 +136,7 @@ const AudioManager = {
 
             newTrack.play();
             newTrack.fade(0, targetVol, 1000);
+            newTrack.mute(AudioManager.settings.bgmMuted);
 
             this.current = newTrack;
             this.currentTrackName = trackName;

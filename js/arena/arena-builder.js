@@ -40,10 +40,10 @@ function renderBuilderHTML() {
                 <!-- CATEGORY TABS -->
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <button class="filter-btn active" id="cat-btn-warriors" onclick="setArenaCategory('warriors', this)">KRIGERE</button>
-                        <button class="filter-btn" id="cat-btn-pps" onclick="setArenaCategory('pps', this)">POWER PLAYERS</button>
-                        <button class="filter-btn" id="cat-btn-weapons" onclick="setArenaCategory('weapons', this)">VÅBEN</button>
-                        <button class="filter-btn" id="cat-btn-pods" onclick="setArenaCategory('pods', this)">PODS</button>
+                        <button class="filter-btn ${arenaCategory === 'warriors' ? 'active' : ''}" id="cat-btn-warriors" onclick="setArenaCategory('warriors', this)">KRIGERE</button>
+                        <button class="filter-btn ${arenaCategory === 'pps' ? 'active' : ''}" id="cat-btn-pps" onclick="setArenaCategory('pps', this)">POWER PLAYERS</button>
+                        <button class="filter-btn ${arenaCategory === 'weapons' ? 'active' : ''}" id="cat-btn-weapons" onclick="setArenaCategory('weapons', this)">VÅBEN</button>
+                        <button class="filter-btn ${arenaCategory === 'pods' ? 'active' : ''}" id="cat-btn-pods" onclick="setArenaCategory('pods', this)">PODS</button>
                     </div>
                     <div>
                         <span style="font-size:0.8rem; color:#888; margin-right:10px;">SORTER:</span>
@@ -56,15 +56,15 @@ function renderBuilderHTML() {
                 </div>
 
                 <!-- WARRIOR FILTERS -->
-                <div id="warrior-filters" style="background:#0a0c14; padding:10px; border-radius:10px; margin-bottom:15px; display:flex; flex-direction:column; gap:10px;">
+                <div id="warrior-filters" style="background:#0a0c14; padding:10px; border-radius:10px; margin-bottom:15px; display:${arenaCategory === 'warriors' ? 'flex' : 'none'}; flex-direction:column; gap:10px;">
                     <div class="filter-group">
                         <span class="filter-label">TYPE:</span>
-                        <button class="filter-btn active" onclick="setArenaFilter('type', 'all', this)">ALLE</button>
-                        <button class="filter-btn" onclick="setArenaFilter('type', 'red', this)" style="color:var(--red)">RØD</button>
-                        <button class="filter-btn" onclick="setArenaFilter('type', 'green', this)" style="color:var(--green)">GRØN</button>
-                        <button class="filter-btn" onclick="setArenaFilter('type', 'blue', this)" style="color:var(--blue)">BLÅ</button>
-                        <button class="filter-btn" onclick="setArenaFilter('type', 'hybrid', this)" style="color:var(--gold)">MUTANT</button>
-                        <button class="filter-btn" onclick="setArenaFilter('type', 'metallic', this)" style="color:#c0c0c0">RAMMS</button>
+                        <button class="filter-btn ${arenaFilterType === 'all' ? 'active' : ''}" onclick="setArenaFilter('type', 'all', this)">ALLE</button>
+                        <button class="filter-btn ${arenaFilterType === 'red' ? 'active' : ''}" onclick="setArenaFilter('type', 'red', this)" style="color:var(--red)">RØD</button>
+                        <button class="filter-btn ${arenaFilterType === 'green' ? 'active' : ''}" onclick="setArenaFilter('type', 'green', this)" style="color:var(--green)">GRØN</button>
+                        <button class="filter-btn ${arenaFilterType === 'blue' ? 'active' : ''}" onclick="setArenaFilter('type', 'blue', this)" style="color:var(--blue)">BLÅ</button>
+                        <button class="filter-btn ${arenaFilterType === 'hybrid' ? 'active' : ''}" onclick="setArenaFilter('type', 'hybrid', this)" style="color:var(--gold)">MUTANT</button>
+                        <button class="filter-btn ${arenaFilterType === 'metallic' ? 'active' : ''}" onclick="setArenaFilter('type', 'metallic', this)" style="color:#c0c0c0">RAMMS</button>
                     </div>
                 </div>
 

@@ -105,8 +105,8 @@ function renderRules() {
                     <strong style="color:#fff;">Alien vs. Alien (Magtcirklen):</strong>
                     <ul style="color:#ccc; padding-left: 20px; list-style-type: none; margin-bottom: 0;">
                         <li>🔴 <strong>Dredrocks</strong> knuser 🟢 <strong>Gangreens</strong> med muskler.</li>
-                        <li>🟢 <strong>Gangreens</strong> neutraliserer 🔵 <strong>Bluespews</strong> med slim.</li>
-                        <li>🔵 <strong>Bluespews</strong> nedsmelter 🔴 <strong>Dredrocks</strong> med syre.</li>
+                        <li>🟢 <strong>Gangreens</strong> neutraliserer 🔵 <strong>Bluspews</strong> med slim.</li>
+                        <li>🔵 <strong>Bluspews</strong> nedsmelter 🔴 <strong>Dredrocks</strong> med syre.</li>
                         <li style="margin-top:5px; font-style:italic;">* Kæmper to af samme farve mod hinanden, er det en Power Duel!</li>
                     </ul>
                 </div>

@@ -54,6 +54,12 @@ function openEliteShopModal() {
                 <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Indeholder den legendariske Jangutz Khan</div>
                 <div style="color:var(--blue); font-weight:bold; margin-top:5px; font-size:1.1rem;">16 Jangutz Points</div>
             </button>
+            <button class="shop-btn" onclick="buyVaultPack()" onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" style="background:radial-gradient(circle, #001122 0%, #000011 100%); border:2px solid var(--blue); color:#fff; padding:20px; border-radius:15px; cursor:pointer; width:300px; transition:0.2s; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 0 30px rgba(0, 85, 255, 0.2);">
+                <img class="pack-img" src="assets/shop/blister_pack_us.gif" style="width:100%; height:250px; object-fit:contain; margin-bottom:10px; image-rendering:pixelated; transition: transform 0.1s ease-out;">
+                <div style="font-weight:bold; margin:5px 0; font-size:1.2rem; color:var(--blue);">THE VAULT</div>
+                <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">2 Udgåede Aliens (Chance for US RAMM!)</div>
+                <div style="color:var(--gold); font-weight:bold; margin-top:5px; font-size:1.1rem;">5 Jangutz Points</div>
+            </button>
         </div>
         <button onclick="document.getElementById('elite-shop-modal').remove()" style="margin-top: 30px; padding: 10px 30px; background: #333; color: #fff; border: 1px solid #555; border-radius: 50px; cursor: pointer;">Tilbage til Butikken</button>
     `;
@@ -63,11 +69,11 @@ function openEliteShopModal() {
 }
 
 function buyElitePack() {
-    if (typeof shopIsBusy !== 'undefined' && shopIsBusy) return;
+    if (typeof shopIsBusy !== 'undefined' && shopIsBusy) return false;
     
     if ((state.points || 0) < 10) {
         showAlert("Du har ikke nok Jangutz Points.", "Mangler Points");
-        return;
+        return false;
     }
     
     if(typeof setShopBusy === 'function') setShopBusy(true);
@@ -82,15 +88,16 @@ function buyElitePack() {
     
     save();
     document.getElementById('elite-shop-modal')?.remove();
-    openPackInteractive(items);
+    openPackInteractive(items, 'elite_ramm');
+    return true;
 }
 
 function buyJangutzPack() {
-    if (typeof shopIsBusy !== 'undefined' && shopIsBusy) return;
+    if (typeof shopIsBusy !== 'undefined' && shopIsBusy) return false;
 
     if ((state.points || 0) < 16) {
         showAlert("Du har ikke nok Jangutz Points.", "Mangler Points");
-        return;
+        return false;
     }
 
     if(typeof setShopBusy === 'function') setShopBusy(true);
@@ -101,5 +108,38 @@ function buyJangutzPack() {
     save();
 
     document.getElementById('elite-shop-modal')?.remove();
-    openPackInteractive([item]);
+    openPackInteractive([item], 'elite_jangutz');
+    return true;
+}
+
+function buyVaultPack() {
+    if (typeof shopIsBusy !== 'undefined' && shopIsBusy) return false;
+
+    if ((state.points || 0) < 5) {
+        showAlert("Du har ikke nok Jangutz Points.", "Mangler Points");
+        return false;
+    }
+
+    if(typeof setShopBusy === 'function') setShopBusy(true);
+    state.points -= 5;
+
+    const items = [];
+    // Pulje af udgåede aliens (dem der kun var i Gen 1 og ikke Gen 2)
+    let vaultPool = alienData.filter(a => a.releases && a.releases.includes('gen_1') && !a.releases.includes('gen_2'));
+    if (vaultPool.length === 0) vaultPool = alienData.filter(a => (a.releases || [a.release]).includes('gen_1'));
+
+    for(let i=0; i<2; i++) {
+        if (Math.random() < 0.05 && !items.some(x => x.id === 59)) {
+            const usRamm = alienData.find(a => a.id === 59);
+            if (usRamm) items.push(addAlienToInventory(usRamm, 'us'));
+        } else {
+            const randomVault = vaultPool[Math.floor(Math.random() * vaultPool.length)];
+            items.push(addAlienToInventory(randomVault, 'gen_1'));
+        }
+    }
+
+    save();
+    document.getElementById('elite-shop-modal')?.remove();
+    openPackInteractive(items, 'blister_us');
+    return true;
 }

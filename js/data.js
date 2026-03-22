@@ -1,92 +1,89 @@
 const alienData = [
-    // Bluespews (Aliens) - Gen 1
-    { id: 1, name: "Messamolo", type: "blue", group: "Bluspews", img: "assets/aliens/Bluespews/messamolo.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 2, name: "Narco Morfist", type: "blue", group: "Bluspews", img: "assets/aliens/Bluespews/narco_morfist.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 3, name: "Sir Trance-A-Lot", type: "blue", group: "Bluspews", img: "assets/aliens/Bluespews/sir_trance-a-lot.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 4, name: "Sizzlehyde", type: "blue", group: "Bluspews", img: "assets/aliens/Bluespews/sizzlehyde.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 5, name: "Sulfuric Sultan", type: "blue", group: "Bluspews", img: "assets/aliens/Bluespews/sulfuric_sultan.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 6, name: "The Disaster", type: "blue", group: "Bluspews", img: "assets/aliens/Bluespews/the_disaster.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    // Bluespews (Aliens) - Gen 2
-    { id: 7, name: "Fritz Frier", type: "blue", group: "Bluspews", img: "assets/aliens/Bluespews/fritz_frier.gif", release: 'gen_2', rarity: 'uncommon', powerRange: [5, 17] },
-    { id: 8, name: "The Liquidator", type: "blue", group: "Bluspews", img: "assets/aliens/Bluespews/the_liquidator.gif", release: 'gen_2', rarity: 'uncommon', powerRange: [5, 17] },
-    // Bluespews (Aliens) - Exclusives
-    { id: 9, name: "Double Trouble", type: "blue", group: "Bluspews", img: "assets/aliens/Bluespews/double_trouble.gif", release: 'italian', rarity: 'rare', powerRange: [7, 18] },
-    { id: 10, name: "Psycho Licious", type: "blue", group: "Bluspews", img: "assets/aliens/Bluespews/psycho_licious.gif", release: 'japanese', rarity: 'legendary', powerRange: [8, 20] },
+    // Bluspews (Aliens)
+    { id: 1, name: "Messamolo", type: "blue", group: "Bluspews", img: "assets/aliens/Bluspews/messamolo.gif", releases: ['gen_1', 'gen_2'], rarity: 'common', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
+    { id: 2, name: "Narco Morfist", type: "blue", group: "Bluspews", img: "assets/aliens/Bluspews/narco_morfist.gif", releases: ['gen_1', 'gen_2'], rarity: 'common', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
+    { id: 3, name: "Sir Trance-A-Lot", type: "blue", group: "Bluspews", img: "assets/aliens/Bluspews/sir_trance-a-lot.gif", releases: ['gen_1', 'gen_2'], rarity: 'common', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
+    { id: 4, name: "Sizzlehyde", type: "blue", group: "Bluspews", img: "assets/aliens/Bluspews/sizzlehyde.gif", releases: ['gen_1'], rarity: 'common', powerRanges: { gen_1: [1, 15] } },
+    { id: 5, name: "Sulfuric Sultan", type: "blue", group: "Bluspews", img: "assets/aliens/Bluspews/sulfuric_sultan.gif", releases: ['gen_2'], rarity: 'common', powerRanges: { gen_2: [5, 17] } },
+    { id: 6, name: "The Disaster", type: "blue", group: "Bluspews", img: "assets/aliens/Bluspews/the_disaster.gif", releases: ['gen_1', 'gen_2'], rarity: 'common', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
+    { id: 7, name: "Fritz Frier", type: "blue", group: "Bluspews", img: "assets/aliens/Bluspews/fritz_frier.gif", releases: ['gen_1'], rarity: 'uncommon', powerRanges: { gen_1: [1, 15] } },
+    { id: 8, name: "The Liquidator", type: "blue", group: "Bluspews", img: "assets/aliens/Bluspews/the_liquidator.gif", releases: ['gen_2'], rarity: 'uncommon', powerRanges: { gen_2: [5, 17] } },
+    // Bluspews (Aliens) - Exclusives
+    { id: 9, name: "Double Trouble", type: "blue", group: "Bluspews", img: "assets/aliens/Bluspews/double_trouble.gif", releases: ['italian'], rarity: 'rare', powerRanges: { italian: [7, 18] } },
+    { id: 10, name: "Psycho Licious", type: "blue", group: "Bluspews", img: "assets/aliens/Bluspews/psycho_licious.gif", releases: ['japanese'], rarity: 'legendary', powerRanges: { japanese: [8, 20] } },
 
-    // Dredrocks (Aliens) - Gen 1
-    { id: 11, name: "Crassinova", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/crassinova.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 12, name: "Xtravator", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/xtravator.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 13, name: "Heartless Wonder", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/heartless_wonder.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 14, name: "Quad-Eye Moto", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/quad-eye_moto.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 15, name: "Slam Rock", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/slam_rock.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 16, name: "Sumo Stumpo", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/sumo_stumpo.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    // Dredrocks (Aliens) - Gen 2
-    { id: 17, name: "Bendzonian", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/bendzonian.gif", release: 'gen_2', rarity: 'uncommon', powerRange: [5, 17] },
-    { id: 18, name: "Jawbreaker", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/jawbreaker.gif", release: 'gen_2', rarity: 'uncommon', powerRange: [5, 17] },
+    // Dredrocks (Aliens)
+    { id: 11, name: "Crassinova", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/crassinova.gif", releases: ['gen_1', 'gen_2'], rarity: 'common', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
+    { id: 12, name: "Xtravator", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/xtravator.gif", releases: ['gen_2'], rarity: 'common', powerRanges: { gen_2: [5, 17] } },
+    { id: 13, name: "Heartless Wonder", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/heartless_wonder.gif", releases: ['gen_1', 'gen_2'], rarity: 'common', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
+    { id: 14, name: "Quad-Eye Moto", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/quad-eye_moto.gif", releases: ['gen_1'], rarity: 'common', powerRanges: { gen_1: [1, 15] } },
+    { id: 15, name: "Slam Rock", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/slam_rock.gif", releases: ['gen_1', 'gen_2'], rarity: 'common', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
+    { id: 16, name: "Sumo Stumpo", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/sumo_stumpo.gif", releases: ['gen_1'], rarity: 'common', powerRanges: { gen_1: [1, 15] } },
+    { id: 17, name: "Bendzonian", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/bendzonian.gif", releases: ['gen_1', 'gen_2'], rarity: 'uncommon', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
+    { id: 18, name: "Jawbreaker", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/jawbreaker.gif", releases: ['gen_2'], rarity: 'uncommon', powerRanges: { gen_2: [5, 17] } },
     // Dredrocks (Aliens) - Exclusives
-    { id: 19, name: "Fang Face", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/fang_face.gif", release: 'italian', rarity: 'rare', powerRange: [7, 18] },
-    { id: 20, name: "Alexoid Flexoid", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/alexoid_flexoid.gif", release: 'japanese', rarity: 'legendary', powerRange: [8, 20] },
+    { id: 19, name: "Fang Face", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/fang_face.gif", releases: ['italian'], rarity: 'rare', powerRanges: { italian: [7, 18] } },
+    { id: 20, name: "Alexoid Flexoid", type: "red", group: "Dredrocks", img: "assets/aliens/Dredrocks/alexoid_flexoid.gif", releases: ['japanese'], rarity: 'legendary', powerRanges: { japanese: [8, 20] } },
 
-    // Gangreens (Aliens) - Gen 1
-    { id: 21, name: "Burp N Bake", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/burp_n_bake.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 22, name: "Clawz Battsky", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/clawz_battsky.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 23, name: "Killapede", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/killapede.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 24, name: "Nitz Clawsom", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/nitz_clawsom.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 25, name: "Schlott Schott", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/schlott_schott.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    { id: 26, name: "Sucktoria", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/sucktoria.gif", release: 'gen_1', rarity: 'common', powerRange: [1, 15] },
-    // Gangreens (Aliens) - Gen 2
-    { id: 27, name: "Bugsy Tallone", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/bugsy_tallone.gif", release: 'gen_2', rarity: 'uncommon', powerRange: [5, 17] },
-    { id: 28, name: "Slimy Slurper", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/slimy_slurper.gif", release: 'gen_2', rarity: 'uncommon', powerRange: [5, 17] },
+    // Gangreens (Aliens)
+    { id: 21, name: "Burp N Bake", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/burp_n_bake.gif", releases: ['gen_1', 'gen_2'], rarity: 'common', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
+    { id: 22, name: "Clawz Battsky", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/clawz_battsky.gif", releases: ['gen_1', 'gen_2'], rarity: 'common', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
+    { id: 23, name: "Killapede", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/killapede.gif", releases: ['gen_1'], rarity: 'common', powerRanges: { gen_1: [1, 15] } },
+    { id: 24, name: "Nitz Clawsom", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/nitz_clawsom.gif", releases: ['gen_1', 'gen_2'], rarity: 'common', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
+    { id: 25, name: "Schlott Schott", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/schlott_schott.gif", releases: ['gen_1'], rarity: 'common', powerRanges: { gen_1: [1, 15] } },
+    { id: 26, name: "Sucktoria", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/sucktoria.gif", releases: ['gen_2'], rarity: 'common', powerRanges: { gen_2: [5, 17] } },
+    { id: 27, name: "Bugsy Tallone", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/bugsy_tallone.gif", releases: ['gen_2'], rarity: 'uncommon', powerRanges: { gen_2: [5, 17] } },
+    { id: 28, name: "Slimy Slurper", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/slimy_slurper.gif", releases: ['gen_1', 'gen_2'], rarity: 'uncommon', powerRanges: { gen_1: [1, 15], gen_2: [5, 17] } },
     // Gangreens (Aliens) - Exclusives
-    { id: 29, name: "Chlorosis", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/chlorosis.gif", release: 'italian', rarity: 'rare', powerRange: [7, 18] },
-    { id: 30, name: "Mucosis", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/mucosis.gif", release: 'japanese', rarity: 'legendary', powerRange: [8, 20] },
+    { id: 29, name: "Chlorosis", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/chlorosis.gif", releases: ['italian'], rarity: 'rare', powerRanges: { italian: [7, 18] } },
+    { id: 30, name: "Mucosis", type: "green", group: "Gangreens", img: "assets/aliens/Gangreens/mucosis.gif", releases: ['japanese'], rarity: 'legendary', powerRanges: { japanese: [8, 20] } },
 
     // Mutants - Gen 1
-    { id: 31, name: "Biospewer", type: "hybrid", group: "Mutants", c1: "green", c2: "blue", img: "assets/mutants/biospewer.gif", powerRange: [9, 18], release: "gen_1" },
-    { id: 32, name: "Doc Acidonian", type: "hybrid", group: "Mutants", c1: "red", c2: "blue", img: "assets/mutants/doc_acidonian.gif", powerRange: [19, 28], release: "gen_1" },
-    { id: 33, name: "Maggatosis", type: "hybrid", group: "Mutants", c1: "green", c2: "red", img: "assets/mutants/maggatosis.gif", powerRange: [19, 28], release: "gen_1" },
-    { id: 34, name: "Psychonator", type: "hybrid", group: "Mutants", c1: "red", c2: "blue", img: "assets/mutants/psychonator.gif", powerRange: [9, 18], release: "gen_1" },
-    { id: 35, name: "Sgt. Spewspittle", type: "hybrid", group: "Mutants", c1: "green", c2: "blue", img: "assets/mutants/sgt._spewspittle.gif", powerRange: [19, 28], release: "gen_1" },
-    { id: 36, name: "Slurpmaniac", type: "hybrid", group: "Mutants", c1: "blue", c2: "green", img: "assets/mutants/slurpmaniac.gif", powerRange: [9, 18], release: "gen_1" },
-    { id: 37, name: "Spinal Mutosis", type: "hybrid", group: "Mutants", c1: "green", c2: "red", img: "assets/mutants/spinal_mutosis.gif", powerRange: [9, 18], release: "gen_1" },
-    { id: 38, name: "The Psycho Rocker", type: "hybrid", group: "Mutants", c1: "blue", c2: "red", img: "assets/mutants/the_psycho_rocker.gif", powerRange: [9, 18], release: "gen_1" },
-    { id: 39, name: "The Shredder", type: "hybrid", group: "Mutants", c1: "green", c2: "red", img: "assets/mutants/the_shredder.gif", powerRange: [9, 18], release: "gen_1" },
+    { id: 31, name: "Biospewer", type: "hybrid", group: "Mutants", c1: "green", c2: "blue", img: "assets/mutants/biospewer.gif", releases: ["gen_1"], powerRanges: { gen_1: [9, 18] } },
+    { id: 32, name: "Doc Acidonian", type: "hybrid", group: "Mutants", c1: "red", c2: "blue", img: "assets/mutants/doc_acidonian.gif", releases: ["gen_1"], powerRanges: { gen_1: [19, 28] } },
+    { id: 33, name: "Maggatosis", type: "hybrid", group: "Mutants", c1: "green", c2: "red", img: "assets/mutants/maggatosis.gif", releases: ["gen_1"], powerRanges: { gen_1: [19, 28] } },
+    { id: 34, name: "Psychonator", type: "hybrid", group: "Mutants", c1: "red", c2: "blue", img: "assets/mutants/psychonator.gif", releases: ["gen_1"], powerRanges: { gen_1: [9, 18] } },
+    { id: 35, name: "Sgt. Spewspittle", type: "hybrid", group: "Mutants", c1: "green", c2: "blue", img: "assets/mutants/sgt._spewspittle.gif", releases: ["gen_1"], powerRanges: { gen_1: [19, 28] } },
+    { id: 36, name: "Slurpmaniac", type: "hybrid", group: "Mutants", c1: "blue", c2: "green", img: "assets/mutants/slurpmaniac.gif", releases: ["gen_1"], powerRanges: { gen_1: [9, 18] } },
+    { id: 37, name: "Spinal Mutosis", type: "hybrid", group: "Mutants", c1: "green", c2: "red", img: "assets/mutants/spinal_mutosis.gif", releases: ["gen_1"], powerRanges: { gen_1: [9, 18] } },
+    { id: 38, name: "The Psycho Rocker", type: "hybrid", group: "Mutants", c1: "blue", c2: "red", img: "assets/mutants/the_psycho_rocker.gif", releases: ["gen_1"], powerRanges: { gen_1: [9, 18] } },
+    { id: 39, name: "The Shredder", type: "hybrid", group: "Mutants", c1: "green", c2: "red", img: "assets/mutants/the_shredder.gif", releases: ["gen_1"], powerRanges: { gen_1: [9, 18] } },
     // Mutants - Gen 2
-    { id: 40, name: "Regenerator", type: "hybrid", group: "Mutants", c1: "blue", c2: "red", img: "assets/mutants/regenerator.gif", powerRange: [19, 28], release: "gen_2" },
-    { id: 41, name: "Rocazilla", type: "hybrid", group: "Mutants", c1: "red", c2: "green", img: "assets/mutants/rocazilla.gif", powerRange: [19, 28], release: "gen_2" },
-    { id: 42, name: "Scizzorian", type: "hybrid", group: "Mutants", c1: "green", c2: "blue", img: "assets/mutants/scizzorian.gif", powerRange: [19, 28], release: "gen_2" },
+    { id: 40, name: "Regenerator", type: "hybrid", group: "Mutants", c1: "blue", c2: "red", img: "assets/mutants/regenerator.gif", releases: ["gen_2"], powerRanges: { gen_2: [19, 28] } },
+    { id: 41, name: "Rocazilla", type: "hybrid", group: "Mutants", c1: "red", c2: "green", img: "assets/mutants/rocazilla.gif", releases: ["gen_2"], powerRanges: { gen_2: [19, 28] } },
+    { id: 42, name: "Scizzorian", type: "hybrid", group: "Mutants", c1: "green", c2: "blue", img: "assets/mutants/scizzorian.gif", releases: ["gen_2"], powerRanges: { gen_2: [19, 28] } },
     
     // Secret Variants (Error Prints)
-    { id: 43, name: "Mono Biospewer", type: "green", group: "Mutants", img: "assets/mutants/biospewer.gif", release: 'secret', rarity: 'ultra_rare', powerRange: [9, 18], cssFilter: "sepia(1) saturate(5) hue-rotate(60deg)" },
-    { id: 44, name: "Mono Psychonator", type: "blue", group: "Mutants", img: "assets/mutants/psychonator.gif", release: 'secret', rarity: 'ultra_rare', powerRange: [9, 18], cssFilter: "sepia(1) saturate(5) hue-rotate(180deg)" },
-    { id: 45, name: "Mono Slurpmaniac", type: "green", group: "Mutants", img: "assets/mutants/slurpmaniac.gif", release: 'secret', rarity: 'ultra_rare', powerRange: [9, 18], cssFilter: "sepia(1) saturate(5) hue-rotate(60deg)" },
-    { id: 46, name: "Mono The Shredder", type: "red", group: "Mutants", img: "assets/mutants/the_shredder.gif", release: 'secret', rarity: 'ultra_rare', powerRange: [9, 18], cssFilter: "sepia(1) saturate(5) hue-rotate(-50deg)" },
-    { id: 47, name: "Mono Spinal Mutosis", type: "red", group: "Mutants", img: "assets/mutants/spinal_mutosis.gif", release: 'secret', rarity: 'ultra_rare', powerRange: [9, 18], cssFilter: "sepia(1) saturate(5) hue-rotate(-50deg)" },
-    { id: 48, name: "Mono The Psycho Rocker", type: "blue", group: "Mutants", img: "assets/mutants/the_psycho_rocker.gif", release: 'secret', rarity: 'ultra_rare', powerRange: [9, 18], cssFilter: "sepia(1) saturate(5) hue-rotate(180deg)" },
+    { id: 43, name: "Mono Biospewer", type: "green", group: "Mutants", img: "assets/mutants/biospewer.gif", releases: ['secret'], rarity: 'ultra_rare', powerRanges: { secret: [9, 18] }, cssFilter: "sepia(1) saturate(5) hue-rotate(60deg)" },
+    { id: 44, name: "Mono Psychonator", type: "blue", group: "Mutants", img: "assets/mutants/psychonator.gif", releases: ['secret'], rarity: 'ultra_rare', powerRanges: { secret: [9, 18] }, cssFilter: "sepia(1) saturate(5) hue-rotate(180deg)" },
+    { id: 45, name: "Mono Slurpmaniac", type: "green", group: "Mutants", img: "assets/mutants/slurpmaniac.gif", releases: ['secret'], rarity: 'ultra_rare', powerRanges: { secret: [9, 18] }, cssFilter: "sepia(1) saturate(5) hue-rotate(60deg)" },
+    { id: 46, name: "Mono The Shredder", type: "red", group: "Mutants", img: "assets/mutants/the_shredder.gif", releases: ['secret'], rarity: 'ultra_rare', powerRanges: { secret: [9, 18] }, cssFilter: "sepia(1) saturate(5) hue-rotate(-50deg)" },
+    { id: 47, name: "Mono Spinal Mutosis", type: "red", group: "Mutants", img: "assets/mutants/spinal_mutosis.gif", releases: ['secret'], rarity: 'ultra_rare', powerRanges: { secret: [9, 18] }, cssFilter: "sepia(1) saturate(5) hue-rotate(-50deg)" },
+    { id: 48, name: "Mono The Psycho Rocker", type: "blue", group: "Mutants", img: "assets/mutants/the_psycho_rocker.gif", releases: ['secret'], rarity: 'ultra_rare', powerRanges: { secret: [9, 18] }, cssFilter: "sepia(1) saturate(5) hue-rotate(180deg)" },
 
     // RAMMs (Metallic Mutants) - Wave 1
-    { id: 51, name: "Rammmazoid", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmazoid.gif", release: 'gen_1', rarity: 'super_rare', powerRange: [31, 35] },
-    { id: 52, name: "Rammmbo", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmbo.gif", release: 'gen_1', rarity: 'super_rare', powerRange: [31, 35] },
-    { id: 53, name: "Rammmbini", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmbini.gif", release: 'gen_1', rarity: 'super_rare', powerRange: [31, 35] },
+    { id: 51, name: "Rammmazoid", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmazoid.gif", releases: ['gen_1'], rarity: 'super_rare', powerRanges: { gen_1: [31, 35] } },
+    { id: 52, name: "Rammmbo", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmbo.gif", releases: ['gen_1'], rarity: 'super_rare', powerRanges: { gen_1: [31, 35] } },
+    { id: 53, name: "Rammmbini", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmbini.gif", releases: ['gen_1'], rarity: 'super_rare', powerRanges: { gen_1: [31, 35] } },
     // RAMMs (Metallic Mutants) - Wave 2
-    { id: 54, name: "Rammmajamma", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmajamma.gif", release: 'gen_2', rarity: 'super_rare', powerRange: [31, 35] },
-    { id: 55, name: "Rammmbler", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmbler.gif", release: 'gen_2', rarity: 'super_rare', powerRange: [31, 35] },
-    { id: 56, name: "Ramminide", type: "metallic", group: "RAMMs", img: "assets/ramms/ramminide.gif", release: 'gen_2', rarity: 'super_rare', powerRange: [31, 35] },
+    { id: 54, name: "Rammmajamma", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmajamma.gif", releases: ['gen_2'], rarity: 'super_rare', powerRanges: { gen_2: [31, 35] } },
+    { id: 55, name: "Rammmbler", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmbler.gif", releases: ['gen_2'], rarity: 'super_rare', powerRanges: { gen_2: [31, 35] } },
+    { id: 56, name: "Ramminide", type: "metallic", group: "RAMMs", img: "assets/ramms/ramminide.gif", releases: ['gen_2'], rarity: 'super_rare', powerRanges: { gen_2: [31, 35] } },
     // RAMMs (Metallic Mutants) - Wave 3 (Exclusives)
-    { id: 57, name: "Rammopolis", type: "metallic", group: "RAMMs", img: "assets/ramms/rammopolis.gif", release: 'italian', rarity: 'super_rare', powerRange: [36, 40] },
-    { id: 58, name: "Rammmutron", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmutron.gif", release: 'japanese', rarity: 'super_rare', powerRange: [36, 40] },
-    { id: 59, name: "Rammmaroid", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmaroid.gif", release: 'us', rarity: 'super_rare', powerRange: [36, 40] },
+    { id: 57, name: "Rammopolis", type: "metallic", group: "RAMMs", img: "assets/ramms/rammopolis.gif", releases: ['italian'], rarity: 'super_rare', powerRanges: { italian: [36, 40] } },
+    { id: 58, name: "Rammmutron", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmutron.gif", releases: ['japanese'], rarity: 'super_rare', powerRanges: { japanese: [36, 40] } },
+    { id: 59, name: "Rammmaroid", type: "metallic", group: "RAMMs", img: "assets/ramms/rammmaroid.gif", releases: ['us'], rarity: 'super_rare', powerRanges: { us: [36, 40] } },
     // Special Edition RAMMs - Elite Collector Club
-    { id: 60, name: "Rammerface", type: "metallic", group: "RAMMs", img: "assets/special_edition_ramm_set/rammerface.gif", release: 'special_edition', rarity: 'ultra_rare', powerRange: [39, 44] },
-    { id: 61, name: "Rammstash", type: "metallic", group: "RAMMs", img: "assets/special_edition_ramm_set/rammstash.gif", release: 'special_edition', rarity: 'ultra_rare', powerRange: [39, 44] },
-    { id: 62, name: "Rammworm", type: "metallic", group: "RAMMs", img: "assets/special_edition_ramm_set/rammworm.gif", release: 'special_edition', rarity: 'ultra_rare', powerRange: [39, 44] },
+    { id: 60, name: "Rammerface", type: "metallic", group: "RAMMs", img: "assets/special_edition_ramm_set/rammerface.gif", releases: ['special_edition'], rarity: 'ultra_rare', powerRanges: { special_edition: [39, 44] } },
+    { id: 61, name: "Rammstash", type: "metallic", group: "RAMMs", img: "assets/special_edition_ramm_set/rammstash.gif", releases: ['special_edition'], rarity: 'ultra_rare', powerRanges: { special_edition: [39, 44] } },
+    { id: 62, name: "Rammworm", type: "metallic", group: "RAMMs", img: "assets/special_edition_ramm_set/rammworm.gif", releases: ['special_edition'], rarity: 'ultra_rare', powerRanges: { special_edition: [39, 44] } },
 
     // Sciroids (Future Content - Pladsholdere)
-    { id: 63, name: "Sciroid Alpha", type: "none", group: "Sciroids", img: "assets/sciroid_battleship/sm1.gif", release: 'battle_ship_exclusive', rarity: 'legendary', powerRange: [40, 45] },
-    { id: 64, name: "Sciroid Beta", type: "none", group: "Sciroids", img: "assets/sciroid_battleship/sm2.gif", release: 'battle_ship_exclusive', rarity: 'legendary', powerRange: [40, 45] },
+    { id: 63, name: "Sciroid Alpha", type: "none", group: "Sciroids", img: "assets/sciroid_battleship/sm1.gif", releases: ['battle_ship_exclusive'], rarity: 'legendary', powerRanges: { battle_ship_exclusive: [40, 45] } },
+    { id: 64, name: "Sciroid Beta", type: "none", group: "Sciroids", img: "assets/sciroid_battleship/sm2.gif", releases: ['battle_ship_exclusive'], rarity: 'legendary', powerRanges: { battle_ship_exclusive: [40, 45] } },
 
     // E-ramm (Jangutz Khan)
-    { id: 65, name: "Jangutz Khan", type: "none", group: "E-ramm", img: "assets/jangutz_khan/jangutz_khan.gif", release: 'jangutz_exclusive', rarity: 'mythic', powerRange: [45, 50] },
+    { id: 65, name: "Jangutz Khan", type: "none", group: "E-ramm", img: "assets/jangutz_khan/jangutz_khan.gif", releases: ['jangutz_exclusive'], rarity: 'mythic', powerRanges: { jangutz_exclusive: [45, 50] } },
 ];
 
 const crystaliteData = [
@@ -197,7 +194,7 @@ const achievementsData = [
     { id: 'level50', name: 'Intergalaktisk Rejsende', desc: 'Nå Niveau 50', target: 50, type: 'level', reward: 20000 },
 
     // --- SPECIFIKKE GRUPPER (The Specialist) ---
-    { id: 'group_bluespews', name: 'Blå Feber', desc: 'Saml alle 10 Bluespews', target: 10, type: 'group_Bluespews', reward: 3000 },
+    { id: 'group_bluespews', name: 'Blå Feber', desc: 'Saml alle 10 Bluspews', target: 10, type: 'group_Bluspews', reward: 3000 },
     { id: 'group_dredrocks', name: 'Stenhård', desc: 'Saml alle 10 Dredrocks', target: 10, type: 'group_Dredrocks', reward: 3000 },
     { id: 'group_gangreens', name: 'Slimet Succes', desc: 'Saml alle 10 Gangreens', target: 10, type: 'group_Gangreens', reward: 3000 },
     { id: 'group_ramms', name: 'Metal-hoved', desc: 'Saml alle 12 RAMMs', target: 12, type: 'group_RAMMs', reward: 7500 },
