@@ -181,6 +181,8 @@ function showPage(p) {
         if (p === 'achievements' && typeof renderAchievements === 'function') {
             renderAchievements();
         }
+        
+        updateUI();
 }
 
 function rollPower(base, drawnRelease = null) {
