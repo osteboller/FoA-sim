@@ -121,8 +121,7 @@ const AudioManager = {
             const newTrack = new Howl({
                 src: [newSrc],
                 loop: loop,
-                volume: 0, 
-                html5: true 
+                volume: 0
             });
 
             if (this.current) {
