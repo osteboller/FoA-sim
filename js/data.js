@@ -189,11 +189,12 @@ const achievementsData = [
 
     // --- LEVEL PROGRESSION (The Student) ---
     { id: 'level6', name: 'Skolegården', desc: 'Nå til Skolegården (Niveau 6)', target: 6, type: 'level', reward: 500 },
-    { id: 'level10', name: 'Storebæltsbroen', desc: 'Nå Niveau 10', target: 10, type: 'level', reward: 2000 },
-    { id: 'level20', name: 'Udkanten af Byen', desc: 'Nå Niveau 20', target: 20, type: 'level', reward: 5000 },
-    { id: 'level50', name: 'Intergalaktisk Rejsende', desc: 'Nå Niveau 50', target: 50, type: 'level', reward: 20000 },
+    { id: 'level11', name: 'Rivalerne', desc: 'Nå til Rivalerne (Niveau 11)', target: 11, type: 'level', reward: 2000 },
+    { id: 'level21', name: 'Pizza & Pasta', desc: 'Nå til Italien (Niveau 21)', target: 21, type: 'level', reward: 5000 },
+    { id: 'level31', name: 'Verdensmester', desc: 'Nå til Japan (Niveau 31)', target: 31, type: 'level', reward: 20000 },
 
     // --- SPECIFIKKE GRUPPER (The Specialist) ---
+    { id: 'group_bluespews', name: 'Blå Feber', desc: 'Saml alle 10 Bluespews', target: 10, type: 'group_Bluespews', reward: 3000 },
     { id: 'group_bluespews', name: 'Blå Feber', desc: 'Saml alle 10 Bluspews', target: 10, type: 'group_Bluspews', reward: 3000 },
     { id: 'group_dredrocks', name: 'Stenhård', desc: 'Saml alle 10 Dredrocks', target: 10, type: 'group_Dredrocks', reward: 3000 },
     { id: 'group_gangreens', name: 'Slimet Succes', desc: 'Saml alle 10 Gangreens', target: 10, type: 'group_Gangreens', reward: 3000 },
@@ -218,7 +219,23 @@ const achievementsData = [
 
     // --- POWER ROLLS (Perfektion) ---
     { id: 'max_power_1', name: 'Perfekt Rul', desc: 'Få en Alien med dens absolut maksimale Power', target: 1, type: 'max_power', reward: 2000 },
-    { id: 'max_power_10', name: 'Perfektionist', desc: 'Ejer 10 Aliens med maksimal Power', target: 10, type: 'max_power', reward: 15000 }
+    { id: 'max_power_10', name: 'Perfektionist', desc: 'Ejer 10 Aliens med maksimal Power', target: 10, type: 'max_power', reward: 15000 },
+
+    // --- ENDLESS STREAKS (The Survivor) ---
+    { id: 'endless_5_5', name: 'Hjemmebane-Fordel', desc: 'Vind 5 Endless kampe i træk (Hjemme)', target: 5, type: 'endless_5', reward: 1000 },
+    { id: 'endless_5_10', name: 'Nabolagets Skræk', desc: 'Vind 10 Endless kampe i træk (Hjemme)', target: 10, type: 'endless_5', reward: 5000 },
+    { id: 'endless_10_5', name: 'Skolegårdens Konge', desc: 'Vind 5 Endless kampe i træk (Skolegården)', target: 5, type: 'endless_10', reward: 1500 },
+    { id: 'endless_10_10', name: 'Uden for Pædagogisk Rækkevidde', desc: 'Vind 10 Endless kampe i træk (Skolegården)', target: 10, type: 'endless_10', reward: 7500 },
+    { id: 'endless_15_5', name: 'Rival-Tæver', desc: 'Vind 5 Endless kampe i træk (Rivalerne)', target: 5, type: 'endless_15', reward: 2000 },
+    { id: 'endless_15_10', name: 'Skolernes Hersker', desc: 'Vind 10 Endless kampe i træk (Rivalerne)', target: 10, type: 'endless_15', reward: 10000 },
+    { id: 'endless_20_5', name: 'SFO Champion', desc: 'Vind 5 Endless kampe i træk (SFO)', target: 5, type: 'endless_20', reward: 2500 },
+    { id: 'endless_20_10', name: 'Natuglen', desc: 'Vind 10 Endless kampe i træk (SFO)', target: 10, type: 'endless_20', reward: 12500 },
+    { id: 'endless_25_5', name: 'Mamma Mia!', desc: 'Vind 5 Endless kampe i træk (Italien)', target: 5, type: 'endless_25', reward: 3000 },
+    { id: 'endless_25_10', name: 'Gladiatorens Genkomst', desc: 'Vind 10 Endless kampe i træk (Italien)', target: 10, type: 'endless_25', reward: 15000 },
+    { id: 'endless_30_5', name: 'Dansk Stolthed', desc: 'Vind 5 Endless kampe i træk (DK Mesterskab)', target: 5, type: 'endless_30', reward: 4000 },
+    { id: 'endless_30_10', name: 'Dannebrog Vejrer', desc: 'Vind 10 Endless kampe i træk (DK Mesterskab)', target: 10, type: 'endless_30', reward: 20000 },
+    { id: 'endless_35_5', name: 'Tokyo Drift', desc: 'Vind 5 Endless kampe i træk (Japan)', target: 5, type: 'endless_35', reward: 5000 },
+    { id: 'endless_35_10', name: 'Sensei', desc: 'Vind 10 Endless kampe i træk (Japan)', target: 10, type: 'endless_35', reward: 25000 }
 ];
 
 const taskData = {

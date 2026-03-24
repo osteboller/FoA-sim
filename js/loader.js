@@ -43,14 +43,16 @@ function initHomePage() {
 function preloadAssets() {
     const assets = new Set();
     const staticAssets = [
-        "assets/bgg/foassa.gif", "assets/bgg/logo_foa_sim.gif", "assets/shop/cousin_br.jpg",
-        "assets/shop/cousin_br_evil.gif", "assets/shop/mystery_box.gif", "assets/shop/mystery_box_open.gif",
+        "assets/bgg/foassa.gif", "assets/bgg/logo_foa_sim.gif", "assets/shop/fatter_br.gif",
+        "assets/shop/fatter_br_evil.gif", "assets/shop/fatter_br_message.gif", "assets/shop/mystery_box.gif", "assets/shop/mystery_box_open.gif",
         "assets/shop/blister_closed.gif", "assets/shop/blister_open.gif", "assets/shop/battle_pack.gif",
         "assets/shop/space_pod_pack.gif", "assets/shop/war_pack.gif", "assets/shop/sciroid_battleship_box.gif",
+        "assets/sciroid_battleship/sciroid_battleship_pod_closed.gif", "assets/sciroid_battleship/sciroid_battleship_pod_open.gif",
         "assets/shop/special_edition_ramm_set.gif", "assets/shop/jangutz_pack.gif", "assets/img/3aliens.gif",
         "assets/shop/blister_pack_it.gif", "assets/shop/blister_open_it.gif",
         "assets/shop/blister_pack_jp.gif", "assets/shop/blister_open_jp.gif",
-        "assets/shop/blister_pack_us.gif", "assets/shop/blister_open_us.gif"
+        "assets/shop/blister_pack_us.gif", "assets/shop/blister_open_us.gif",
+        "assets/shop/foa_poster.gif", "assets/jangutz_khan/poster.gif", "assets/shop/t-shirt.gif"
     ];
     staticAssets.forEach(src => assets.add(src));
     if (typeof workGifs !== 'undefined') workGifs.forEach(gif => assets.add(gif));
@@ -68,6 +70,8 @@ function preloadAssets() {
         "assets/audio/sfx/ui/upgrade-bought2.ogg",
         "assets/audio/sfx/ui/popup-open.ogg",
         "assets/audio/sfx/ui/popup-close.ogg",
+        "assets/audio/sfx/ui/click.ogg",
+        "assets/audio/sfx/ui/coin.ogg",
         "assets/audio/sfx/shop/riser-tier1.ogg",
         "assets/audio/sfx/shop/riser-tier2.ogg",
         "assets/audio/sfx/shop/riser-tier3.ogg",
@@ -76,8 +80,8 @@ function preloadAssets() {
         "assets/audio/sfx/shop/reveal-tier2.ogg",
         "assets/audio/sfx/shop/reveal-tier3.ogg",
         "assets/audio/sfx/shop/reveal-tier4.ogg",
-        "assets/audio/sfx/shop/swipe-01.ogg",
-        "assets/audio/sfx/shop/swipe-02.ogg",
+        "assets/audio/sfx/shop/swipe-1.ogg",
+        "assets/audio/sfx/shop/swipe-2.ogg",
         // BGM
         "assets/audio/bgm/bgm-general.ogg",
         "assets/audio/bgm/shop-theme.ogg",

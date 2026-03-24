@@ -2,11 +2,36 @@ const levelZones = [
     { id: 1, name: "Hjemme", range: [1, 5], desc: "Spil mod lillesøster, lillebror og naboen", color: "#4CAF50", opponentImg: "assets/campaign/locations/home.gif" },
     { id: 2, name: "Skolegården", range: [6, 10], desc: "Spil mod klassekammerater og de store", color: "#2196F3", opponentImg: "assets/campaign/locations/school.gif" },
     { id: 3, name: "Rivalerne", range: [11, 15], desc: "Spil mod bøllerne fra den anden skole", color: "#FF9800", opponentImg: "assets/campaign/locations/rival_school.gif" },
-    { id: 4, name: "Italien", range: [16, 20], desc: "Ferie! Spil mod de lokale mestre", color: "#F44336", opponentImg: "assets/campaign/locations/garda_italia.gif" }
+    { id: 4, name: "SFO Overnatning", range: [16, 20], desc: "Klubmesterskabet på fremmed græs", color: "#F44336", opponentImg: "assets/campaign/locations/sfo.gif" },
+    { id: 5, name: "Italien", range: [21, 25], desc: "Ferie! Spil mod de lokale mestre", color: "#9C27B0", opponentImg: "assets/campaign/locations/garda_italia.gif" },
+    { id: 6, name: "DK Mesterskab", range: [26, 30], desc: "De bedste spillere i Danmark", color: "#E91E63", opponentImg: "assets/campaign/locations/dk_championship.gif" },
+    { id: 7, name: "Japan", range: [31, 35], desc: "Verdensmesterskabet i Tokyo", color: "#00BCD4", opponentImg: "assets/campaign/locations/japan.gif" }
 ];
 
 function renderLevelSelector() {
-    let html = `<div style="display:flex; flex-direction:column; gap:20px;">`;
+    let saveNeeded = false;
+    if (!state.seenZones) {
+        state.seenZones = [];
+        const currentMax = state.maxLevel || 1;
+        levelZones.forEach(z => {
+            if (currentMax >= z.range[0] - 1) state.seenZones.push(z.id);
+        });
+        saveNeeded = true;
+    }
+
+    let html = `
+    <style>
+    @keyframes juicy-zone-reveal {
+        0% { transform: scale(0.8) translateY(30px); opacity: 0; filter: brightness(2) drop-shadow(0 0 20px var(--gold)); }
+        60% { transform: scale(1.02) translateY(-5px); opacity: 1; filter: brightness(1.2) drop-shadow(0 0 15px var(--gold)); }
+        100% { transform: scale(1) translateY(0); opacity: 1; filter: brightness(1) drop-shadow(0 0 0px transparent); }
+    }
+    .anim-new-zone {
+        animation: juicy-zone-reveal 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        z-index: 10;
+    }
+    </style>
+    <div style="display:flex; flex-direction:column; gap:20px;">`;
     
     const currentMax = state.maxLevel || 1;
 
@@ -15,6 +40,17 @@ function renderLevelSelector() {
         const end = zone.range[1];
         // Tjek om zonen er relevant (om vi er nået dertil, eller det er den næste)
         if (currentMax < start && currentMax < start - 1) return; 
+
+        let isNewZone = false;
+        if (!state.seenZones.includes(zone.id)) {
+            isNewZone = true;
+            state.seenZones.push(zone.id);
+            saveNeeded = true;
+            if (typeof AudioManager !== 'undefined') {
+                setTimeout(() => AudioManager.sfx.play('ui', 'trophy-claim'), 300);
+            }
+        }
+        const animClass = isNewZone ? "anim-new-zone" : "";
 
         let btns = "";
         for(let i=start; i<=end; i++) {
@@ -36,8 +72,29 @@ function renderLevelSelector() {
             `;
         }
 
+        // Tilføj Endless Knap
+        const endlessUnlocked = currentMax > end;
+        const endlessBg = endlessUnlocked ? 'var(--panel)' : '#222';
+        const endlessBorder = endlessUnlocked ? zone.color : '#444'; // Zonens farve
+        const endlessOpacity = endlessUnlocked ? '1' : '0.5';
+        const endlessCursor = endlessUnlocked ? 'pointer' : 'default';
+        const endlessOnClick = endlessUnlocked ? `onclick="startEndlessMode(${end})"` : '';
+        const endlessTitle = endlessUnlocked ? `title="Endless Mode - Træn mod zonens mestre igen og igen for at tjene lommepenge!"` : `title="Besejr zonens boss (Niveau ${end}) for at låse op"`;
+
+        btns += `
+            <div style="width:2px; background:#444; margin: 0 5px; border-radius:2px;"></div>
+            <button ${endlessOnClick} ${endlessTitle} style="
+                width:50px; height:50px; background:${endlessBg}; border:2px solid ${endlessBorder}; 
+                border-radius:10px; color:${endlessUnlocked ? zone.color : '#666'}; font-weight:bold; font-size:2rem; line-height: 1;
+                opacity:${endlessOpacity}; cursor:${endlessCursor}; display:flex; align-items:center; justify-content:center;
+                box-shadow: ${endlessUnlocked ? '0 0 10px ' + zone.color : 'none'}; transition: transform 0.2s;
+            " onmouseover="this.style.transform='scale(${endlessUnlocked ? 1.1 : 1})'" onmouseout="this.style.transform='scale(1)'">
+                ∞
+            </button>
+        `;
+
         html += `
-            <div style="background:var(--panel); border:1px solid #333; border-left:5px solid ${zone.color}; border-radius:10px; padding:20px; text-align:left; position: relative; overflow: hidden; min-height: 120px;">
+            <div class="${animClass}" style="background:var(--panel); border:1px solid #333; border-left:5px solid ${zone.color}; border-radius:10px; padding:20px; text-align:left; position: relative; overflow: hidden; min-height: 120px;">
                 <!-- Background Image Layer -->
                 <div style="position: absolute; top: 0; right: 0; bottom: 0; width: 50%; background-image: url('${zone.opponentImg}'); background-size: cover; background-position: center left; opacity: 0.6; -webkit-mask-image: linear-gradient(to right, transparent, black 40%); mask-image: linear-gradient(to right, transparent, black 40%); z-index: 1;"></div>
                 
@@ -54,6 +111,9 @@ function renderLevelSelector() {
     });
 
     html += `</div>`;
+
+    if (saveNeeded) setTimeout(() => save(), 100);
+
     return html;
 }
 

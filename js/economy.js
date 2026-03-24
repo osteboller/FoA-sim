@@ -70,6 +70,10 @@ function manualWork(e) {
         }
     }
 
+    if (typeof AudioManager !== 'undefined') {
+        AudioManager.sfx.play('ui', 'coin');
+    }
+
     state.currency += clickPower;
     state.stats.totalClicks++;
     state.stats.totalDust += clickPower;

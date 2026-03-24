@@ -19,12 +19,13 @@ function generateEnemy(level) {
             const trulyExclusive = ['secret', 'special_edition', 'jangutz_exclusive', 'battle_ship_exclusive'];
             if (releases.some(r => trulyExclusive.includes(r))) return false;
 
-            if (level <= 20 && a.group === 'Sciroids') return false; // Sciroids er kun for level > 20
+            if (level <= 30 && a.group === 'Sciroids') return false; // Sciroids gemmes nu til Japan (Niveau 31+)
             
             // Tjek mod progressionen
             if (level < 11 && releases.includes('gen_2') && !releases.includes('gen_1')) return false; // Kun rene Gen 2 afvises før lvl 11
-            const regionExclusives = ['japanese', 'italian', 'us'];
-            if (level < 16 && releases.some(r => regionExclusives.includes(r))) return false; // Ingen Regionale Exclusives før lvl 16
+            if (level < 21 && releases.includes('italian')) return false; // Møder først Italienere i Italien
+            if (level < 26 && releases.includes('us')) return false; // Møder US under DK Mesterskab
+            if (level < 31 && releases.includes('japanese')) return false; // Møder japanere i Japan
             
             return true;
         });

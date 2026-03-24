@@ -41,7 +41,7 @@ function openEliteShopModal() {
     const content = `
         <h3 style="color:var(--gold); text-transform:uppercase; letter-spacing:2px; font-size:2rem; text-shadow: 0 0 10px var(--gold);">Elite Collector Club</h3>
         <p style="color:#ccc; margin-bottom:20px;">Brug Jangutz Points til at købe eksklusive samlerobjekter.</p>
-        <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+        <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; max-width:1000px; margin:0 auto; padding-bottom: 20px; max-height: 60vh; overflow-y: auto;">
             <button class="shop-btn" onclick="buyElitePack()" onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" style="background:radial-gradient(circle, #4a3800 0%, #1a1400 100%); border:2px solid var(--gold); color:#fff; padding:20px; border-radius:15px; cursor:pointer; width:300px; transition:0.2s; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);">
                 <img class="pack-img" src="assets/shop/special_edition_ramm_set.gif" style="width:100%; height:250px; object-fit:contain; margin-bottom:10px; image-rendering:pixelated; transition: transform 0.1s ease-out;">
                 <div style="font-weight:bold; margin:5px 0; font-size:1.2rem;">MEGA RARE PAKKE</div>
@@ -55,10 +55,22 @@ function openEliteShopModal() {
                 <div style="color:var(--blue); font-weight:bold; margin-top:5px; font-size:1.1rem;">16 Jangutz Points</div>
             </button>
             <button class="shop-btn" onclick="buyVaultPack()" onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" style="background:radial-gradient(circle, #001122 0%, #000011 100%); border:2px solid var(--blue); color:#fff; padding:20px; border-radius:15px; cursor:pointer; width:300px; transition:0.2s; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 0 30px rgba(0, 85, 255, 0.2);">
-                <img class="pack-img" src="assets/shop/blister_pack_us.gif" style="width:100%; height:250px; object-fit:contain; margin-bottom:10px; image-rendering:pixelated; transition: transform 0.1s ease-out;">
+                <img class="pack-img" src="assets/shop/blister_pack_us.gif" data-scale="1.2" style="width:100%; height:250px; object-fit:contain; margin-bottom:10px; image-rendering:pixelated; transition: transform 0.1s ease-out; transform: scale(1.2);">
                 <div style="font-weight:bold; margin:5px 0; font-size:1.2rem; color:var(--blue);">THE VAULT</div>
                 <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">2 Udgåede Aliens (Chance for US RAMM!)</div>
                 <div style="color:var(--gold); font-weight:bold; margin-top:5px; font-size:1.1rem;">5 Jangutz Points</div>
+            </button>
+            <button class="shop-btn" onclick="buyEliteItem('poster')" onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" style="background:radial-gradient(circle, #222 0%, #000 100%); border:2px solid #aaa; color:#fff; padding:20px; border-radius:15px; cursor:pointer; width:300px; transition:0.2s; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);">
+                <img class="pack-img" src="assets/shop/foa_poster.gif" data-scale="1" style="width:100%; height:250px; object-fit:contain; margin-bottom:10px; image-rendering:pixelated; transition: transform 0.1s ease-out;">
+                <div style="font-weight:bold; margin:5px 0; font-size:1.2rem; color:#fff;">FOA PLAKAT</div>
+                <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Den officielle plakat</div>
+                <div style="color:var(--blue); font-weight:bold; margin-top:5px; font-size:1.1rem;">6 Jangutz Points</div>
+            </button>
+            <button class="shop-btn" onclick="buyEliteItem('tshirt')" onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" style="background:radial-gradient(circle, #222 0%, #000 100%); border:2px solid #aaa; color:#fff; padding:20px; border-radius:15px; cursor:pointer; width:300px; transition:0.2s; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);">
+                <img class="pack-img" src="assets/shop/t-shirt.gif" data-scale="1" style="width:100%; height:250px; object-fit:contain; margin-bottom:10px; image-rendering:pixelated; transition: transform 0.1s ease-out;">
+                <div style="font-weight:bold; margin:5px 0; font-size:1.2rem; color:#fff;">FOA T-SHIRT</div>
+                <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Eksklusiv medlems T-shirt</div>
+                <div style="color:var(--blue); font-weight:bold; margin-top:5px; font-size:1.1rem;">8 Jangutz Points</div>
             </button>
         </div>
         <button onclick="document.getElementById('elite-shop-modal').remove()" style="margin-top: 30px; padding: 10px 30px; background: #333; color: #fff; border: 1px solid #555; border-radius: 50px; cursor: pointer;">Tilbage til Butikken</button>
@@ -141,5 +153,32 @@ function buyVaultPack() {
     save();
     document.getElementById('elite-shop-modal')?.remove();
     openPackInteractive(items, 'blister_us');
+    return true;
+}
+
+function buyEliteItem(type) {
+    if (typeof shopIsBusy !== 'undefined' && shopIsBusy) return false;
+
+    if (!state.ownedMerch) state.ownedMerch = [];
+    if (state.ownedMerch.includes(type)) {
+        showAlert("Du ejer allerede dette objekt.", "Allerede Ejet");
+        return false;
+    }
+
+    const cost = type === 'poster' ? 6 : 8;
+    if ((state.points || 0) < cost) {
+        showAlert("Du har ikke nok Jangutz Points.", "Mangler Points");
+        return false;
+    }
+
+    state.points -= cost;
+    state.ownedMerch.push(type);
+    save();
+
+    document.getElementById('elite-shop-modal')?.remove();
+
+    const item = { id: type, name: type === 'poster' ? 'FOA PLAKAT' : 'FOA T-SHIRT', img: type === 'poster' ? 'assets/jangutz_khan/poster.gif' : 'assets/shop/t-shirt.gif', type: 'merch', status: 'NEW' };
+    if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier3');
+    showBigReveal(item);
     return true;
 }

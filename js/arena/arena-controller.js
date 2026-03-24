@@ -11,6 +11,7 @@ let arenaCategory = 'warriors';
 let autoBattleTimer = null;
 let currentArenaView = 'builder'; 
 let selectedLevel = 1;
+let isEndlessMode = false;
 
 function initArena() {
     const arenaPage = document.getElementById('page-arena');
@@ -47,6 +48,13 @@ function initArena() {
 }
 
 function startBattle() {
+    // Sikkerheds-tjek: Er holdet rent faktisk fyldt op?
+    if (!arenaSquad.every(slot => slot !== null)) {
+        showAlert("Dit hold er ikke komplet! Gå til 'BYG HOLD' og vælg 7 kæmpere, før du kan starte kampen.", "Mangler Krigere!");
+        switchArenaView('builder');
+        return;
+    }
+
     const menu = document.getElementById('arena-menu-container');
     if(menu) menu.style.display = 'none';
     document.getElementById('arena-battle').style.display = 'block';
@@ -55,9 +63,10 @@ function startBattle() {
     if (typeof AudioManager !== 'undefined') AudioManager.bgm.play('battle-theme');
 
     const isAuto = document.getElementById('chk-auto-battle').checked;
-    battleState = { round: 0, playerScore: 0, enemyScore: 0, history: [], stake: 1, playerMoves: [], auto: isAuto, weaponUsed: false, ppUsed: false, activeWeaponMultiplier: 1, activeWeaponBonus: 0, phase: 'ready' };
+    battleState = { round: 0, playerScore: 0, enemyScore: 0, history: [], stake: 1, playerMoves: [], auto: isAuto, weaponUsed: false, ppUsed: false, activeWeaponMultiplier: 1, activeWeaponBonus: 0, phase: 'ready', aborted: false };
     
-    document.getElementById('battle-log').innerHTML = `<div>Modstander fundet (Niveau ${selectedLevel}). Knyt næverne!</div>`;
+    const modeText = isEndlessMode ? "Endless Modstander" : "Modstander";
+    document.getElementById('battle-log').innerHTML = `<div>${modeText} fundet (Niveau ${selectedLevel}). Knyt næverne!</div>`;
     
     const wInd = document.getElementById('battle-weapon-indicator');
     if (wInd) {
@@ -188,6 +197,7 @@ function playNextRound(manualIndex = -1) {
     renderBattleField(); 
 
     setTimeout(() => {
+        if(battleState.aborted) return;
         const pIndex = battleState.playerMoves[battleState.round];
         const pFigure = document.getElementById(`player-figure-${pIndex}`);
         const eFigure = document.getElementById('battle-enemy-active').firstElementChild;
@@ -202,6 +212,7 @@ function playNextRound(manualIndex = -1) {
     }, 500);
 
     setTimeout(() => {
+        if(battleState.aborted) return;
         const currentAlien = arenaSquad[pIndex];
         const currentEnemy = enemySquad[battleState.round];
         const isPowerDuel = isPowerRelevant(currentAlien, currentEnemy);
@@ -220,7 +231,7 @@ function playNextRound(manualIndex = -1) {
                 if(eFigure) { eFigure.classList.remove('anim-fly-in-enemy', 'anim-clash-e'); void eFigure.offsetWidth; eFigure.classList.add('anim-clash-winner-e'); }
             }
 
-            setTimeout(() => { _finalizeRound(winner, currentAlien, currentEnemy); }, 1600);
+            setTimeout(() => { if(!battleState.aborted) _finalizeRound(winner, currentAlien, currentEnemy); }, 1600);
         } else {
             if (typeof AudioManager !== 'undefined') {
                 AudioManager.announcer.playEventRandom(['power-duel-1', 'power-duel-2', 'power-duel-3']); // Ret evt. filnavnene her
@@ -245,9 +256,9 @@ function playNextRound(manualIndex = -1) {
                 }
             }
             
-            if (battleState.auto) { setTimeout(() => resolveRound(), 1600); } 
-            else if (weaponUsable) { setTimeout(() => updateBattleControls(), 1600); } 
-            else { setTimeout(() => resolveRound(), 1600); }
+            if (battleState.auto) { setTimeout(() => { if(!battleState.aborted) resolveRound(); }, 1600); } 
+            else if (weaponUsable) { setTimeout(() => { if(!battleState.aborted) updateBattleControls(); }, 1600); } 
+            else { setTimeout(() => { if(!battleState.aborted) resolveRound(); }, 1600); }
         }
     }, 1000);
 }
@@ -289,6 +300,7 @@ function resolveRound() {
     const delayBeforeResult = isPowerDuel ? 1000 : 100;
 
     setTimeout(() => {
+        if(battleState.aborted) return;
         const winner = calculateWinner(pFig, eFig);
         const pIndex = battleState.playerMoves[battleState.round];
         const pFigure = document.getElementById(`player-figure-${pIndex}`);
@@ -309,7 +321,7 @@ function resolveRound() {
             }
         }
 
-        setTimeout(() => _finalizeRound(winner, pFig, eFig), 1200);
+        setTimeout(() => { if(!battleState.aborted) _finalizeRound(winner, pFig, eFig); }, 1200);
     }, delayBeforeResult);
 }
 
@@ -354,7 +366,7 @@ function _finalizeRound(winner, pFig, eFig) {
         if (battleState.enemyScore > battleState.playerScore) {
             if (typeof AudioManager !== 'undefined') AudioManager.bgm.play('defeat', false);
         }
-        setTimeout(() => endMatch(), 1000); // Vent 1 sekund så announcer kan tale færdig
+        setTimeout(() => { if(!battleState.aborted) endMatch(); }, 1000); // Vent 1 sekund så announcer kan tale færdig
     } else {
         updateBattleControls();
         if(battleState.auto) startAutoBattleTimer();
@@ -367,11 +379,25 @@ function endMatch() {
     const isWin = battleState.playerScore > battleState.enemyScore;
     
     if(isWin) { 
-        logMsg += `<span style="color:var(--gold)">DU VANDT ARENA NIVEAU ${selectedLevel}! Belønning: +500 Kr.</span></div>`;
+        const modeText = isEndlessMode ? "ENDLESS KAMPEN" : `ARENA NIVEAU ${selectedLevel}`;
+        logMsg += `<span style="color:var(--gold)">DU VANDT ${modeText}! Belønning: +500 Kr.</span></div>`;
         state.currency += 500; 
         state.stats.totalWins++; 
         
-        if (selectedLevel === (state.maxLevel || 1)) {
+        if (isEndlessMode) {
+            if (!state.currentEndlessStreaks) state.currentEndlessStreaks = {};
+            if (!state.maxEndlessStreaks) state.maxEndlessStreaks = {};
+            
+            state.currentEndlessStreaks[selectedLevel] = (state.currentEndlessStreaks[selectedLevel] || 0) + 1;
+            const currentStreak = state.currentEndlessStreaks[selectedLevel];
+            
+            if (!state.maxEndlessStreaks[selectedLevel] || currentStreak > state.maxEndlessStreaks[selectedLevel]) {
+                state.maxEndlessStreaks[selectedLevel] = currentStreak;
+            }
+            logMsg += `<div style="color:var(--blue); font-weight:bold; font-size:0.95rem; margin-top:5px;">🔥 Endless Streak: ${currentStreak} vundet i træk!</div>`;
+        }
+
+        if (!isEndlessMode && selectedLevel === (state.maxLevel || 1)) {
             state.maxLevel = (state.maxLevel || 1) + 1;
             state.arenaLevel = state.maxLevel;
             logMsg += `<div style="color:var(--green); font-weight:bold; margin-top:5px;">NYT NIVEAU LÅST OP!</div>`;
@@ -382,12 +408,26 @@ function endMatch() {
             if (state.maxLevel === 11) {
                 setTimeout(() => showAlert("Du har nået Rivalerne! SciRoid BattleShip pakken er nu tilgængelig i Shoppen.", "Ny Pakke Låst Op!"), 2000);
             }
+            if (state.maxLevel === 21) {
+                setTimeout(() => showAlert("Benvenuto in Italia! Den Italienske Blister pakke er nu tilgængelig i Shoppen.", "Ny Pakke Låst Op!"), 2000);
+            }
+            if (state.maxLevel === 31) {
+                setTimeout(() => showAlert("Konnichiwa! Den Japanske Blister pakke er nu tilgængelig i Shoppen.", "Ny Pakke Låst Op!"), 2000);
+            }
         }
         showAnnouncement("<span style='color:var(--green); text-shadow:0 0 20px var(--green);'>DU VANDT!</span>", null, 3000);
     }
     else if (battleState.enemyScore > battleState.playerScore) { 
         logMsg += `<span style="color:var(--red)">Du tabte. Prøv igen med en anden taktik!</span></div>`;
         state.stats.totalLosses = (state.stats.totalLosses || 0) + 1; 
+        
+        if (isEndlessMode) {
+            if (state.currentEndlessStreaks && state.currentEndlessStreaks[selectedLevel] > 0) {
+                 logMsg += `<div style="color:#aaa; font-size:0.9rem; margin-top:5px;">Din streak på ${state.currentEndlessStreaks[selectedLevel]} blev brudt!</div>`;
+            }
+            if (!state.currentEndlessStreaks) state.currentEndlessStreaks = {};
+            state.currentEndlessStreaks[selectedLevel] = 0;
+        }
         showAnnouncement("<span style='color:var(--red); text-shadow:0 0 20px var(--red);'>DU TABTE</span>", null, 3000);
     } else {
         logMsg += `<span style="color:#aaa">Kampen endte Uafgjort! Ingen vinder.</span></div>`;
@@ -405,10 +445,13 @@ function endMatch() {
 
     showMatchResultOverlay(
         outcome,
-        () => { currentArenaView = 'builder'; initArena(); save(); },
-        () => { currentArenaView = 'levels'; initArena(); save(); },
+        () => { isEndlessMode = false; currentArenaView = 'builder'; initArena(); save(); },
+        () => { isEndlessMode = false; currentArenaView = 'levels'; initArena(); save(); },
         () => { startBattle(); },
-        () => { selectLevel(selectedLevel + 1); }
+        () => { 
+            if (isEndlessMode) startBattle(); 
+            else selectLevel(selectedLevel + 1); 
+        }
     );
 }
 
@@ -417,6 +460,12 @@ function surrenderBattle() {
         "Er du sikker på, at du vil give op? Dette vil tælle som et nederlag.", 
         "Giv Op?", 
         () => {
+            battleState.aborted = true;
+            if (isEndlessMode) {
+                if (!state.currentEndlessStreaks) state.currentEndlessStreaks = {};
+                state.currentEndlessStreaks[selectedLevel] = 0;
+            }
+            isEndlessMode = false;
             if(autoBattleTimer) clearInterval(autoBattleTimer);
             currentArenaView = 'builder';
             state.stats.totalLosses = (state.stats.totalLosses || 0) + 1;
@@ -426,4 +475,16 @@ function surrenderBattle() {
 }
 
 function switchArenaView(view) { currentArenaView = view; initArena(); }
-function selectLevel(lvl) { if (lvl > (state.maxLevel || 1)) return; selectedLevel = lvl; startBattle(); }
+
+function selectLevel(lvl) {
+    if (lvl > (state.maxLevel || 1)) return;
+    isEndlessMode = false;
+    selectedLevel = lvl;
+    startBattle();
+}
+
+function startEndlessMode(lvl) {
+    isEndlessMode = true;
+    selectedLevel = lvl;
+    startBattle();
+}

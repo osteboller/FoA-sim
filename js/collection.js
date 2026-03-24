@@ -4,6 +4,8 @@ function switchCollectionTab(tab) {
     document.getElementById('tab-album').className = tab === 'album' ? 'tab-btn active' : 'tab-btn';
     const gearBtn = document.getElementById('tab-gear');
     if(gearBtn) gearBtn.className = tab === 'gear' ? 'tab-btn active' : 'tab-btn';
+    const merchBtn = document.getElementById('tab-merch');
+    if(merchBtn) merchBtn.className = tab === 'merch' ? 'tab-btn active' : 'tab-btn';
     document.getElementById('collection-controls').style.display = tab === 'figures' ? 'flex' : 'none';
     updateCollection();
 }
@@ -46,6 +48,50 @@ function updateCollection() {
         
         // Neutralizer (407) - Special
         renderGearGroup(album, "Special Gear", [407], null);
+        
+        // SciRoid BattleShip
+        renderGearGroup(album, "Sciroid Gear", [], 'battleship');
+        return;
+    }
+
+    if (currentCollectionTab === 'merch') {
+        const section = document.createElement('div');
+        section.className = "album-section";
+        section.innerHTML = `<div class="section-title">Merchandise</div>`;
+        const grid = document.createElement('div');
+        grid.className = "row-grid";
+        grid.style.gap = "30px";
+
+        const merchItems = [
+            { id: 'poster', name: 'FOA PLAKAT', img: 'assets/jangutz_khan/poster.gif' },
+            { id: 'tshirt', name: 'FOA T-SHIRT', img: 'assets/shop/t-shirt.gif' }
+        ];
+
+        if (!state.ownedMerch) state.ownedMerch = [];
+
+        merchItems.forEach(item => {
+            const owned = state.ownedMerch.includes(item.id);
+            const el = document.createElement('div');
+            el.style.cssText = "background:transparent; border-radius:10px; overflow:hidden; text-align:center;";
+            if (owned) {
+                el.className = "hover-pop";
+                el.style.cursor = 'pointer';
+                el.onclick = () => showBigReveal({ ...item, type: 'merch', power: undefined, status: null });
+            }
+            
+            const filterStyle = owned ? "" : "filter: grayscale(100%) brightness(40%); opacity: 0.6;";
+            const titleColor = owned ? "var(--gold)" : "#666";
+
+            el.innerHTML = `
+                <img src="${item.img}" style="width:100%; max-width:200px; height:auto; display:block; margin:0 auto; image-rendering:pixelated; filter:drop-shadow(0 4px 5px rgba(0,0,0,0.5)) ${filterStyle};">
+                <div style="font-weight:bold; margin-top:10px; color:${titleColor}; font-size: 1.2rem;">${item.name}</div>
+                <div style="font-size:0.9rem; color:#aaa;">${owned ? 'Ejet' : 'Låst'}</div>
+            `;
+            grid.appendChild(el);
+        });
+
+        section.appendChild(grid);
+        album.appendChild(section);
         return;
     }
 
@@ -272,9 +318,14 @@ function renderGearGroup(container, title, weaponIds, podColor) {
         if (count > 0) podEl.className = "hover-pop";
         podEl.style.cssText = "background:transparent; border-radius:10px; overflow:hidden; text-align:center;";
         const filterStyle = count > 0 ? "" : "filter: grayscale(100%) brightness(40%); opacity: 0.6;";
+        
+        const imgSrc = podColor === 'battleship' ? 'assets/sciroid_battleship/sciroid_battleship_pod_open.gif' : `assets/pods/${podColor}_pod.gif`;
+        const podName = podColor === 'battleship' ? 'SCIROID BATTLESHIP' : `${podColor.toUpperCase()} POD`;
+        const titleColor = count > 0 ? (podColor === 'battleship' ? '#00ff00' : podColor) : '#666';
+
         podEl.innerHTML = `
-            <img src="assets/pods/${podColor}_pod.gif" style="width:100%; max-width:100px; height:auto; display:block; margin:0 auto; image-rendering:pixelated; filter:drop-shadow(0 4px 5px rgba(0,0,0,0.5)) ${filterStyle};">
-            <div style="font-weight:bold; margin-top:5px; color:${count > 0 ? podColor : '#666'};">${podColor.toUpperCase()} POD</div>
+            <img src="${imgSrc}" style="width:100%; max-width:100px; height:auto; display:block; margin:0 auto; image-rendering:pixelated; filter:drop-shadow(0 4px 5px rgba(0,0,0,0.5)) ${filterStyle};">
+            <div style="font-weight:bold; margin-top:5px; color:${titleColor};">${podName}</div>
             <div style="font-size:0.8rem; color:#aaa;">Ejet: ${count}</div>
         `;
         grid.appendChild(podEl);

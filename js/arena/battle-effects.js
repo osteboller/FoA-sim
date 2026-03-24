@@ -97,12 +97,13 @@ function showMatchResultOverlay(outcome, btnBuildCallback, btnCampaignCallback, 
     btnContainer.className = "result-btn-container";
 
     const isWin = outcome === 'win';
+    const nextText = (typeof isEndlessMode !== 'undefined' && isEndlessMode) ? 'NY ENDLESS KAMP' : 'NÆSTE MODSTANDER';
 
     btnContainer.innerHTML = `
         <button class="result-btn btn-build">SAML HOLD</button>
         <button class="result-btn btn-retry">PRØV IGEN</button>
         <button class="result-btn btn-campaign">KAMPAGNE</button>
-        ${isWin ? '<button class="result-btn btn-next">NÆSTE MODSTANDER</button>' : ''}
+        ${isWin ? `<button class="result-btn btn-next">${nextText}</button>` : ''}
     `;
 
     const btns = btnContainer.querySelectorAll('button');

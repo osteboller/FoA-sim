@@ -40,6 +40,8 @@ async function openPackInteractive(items, packType) {
     container.style.display = ''; // Fjerner 'display:none', så CSS klassen kan vises
     container.style.overflowX = 'hidden'; // Dræb horisontal scrollbar under animationer
     container.style.overflowY = 'auto'; // Tillad kun vertikal scroll, hvis pakken er meget stor
+    container.style.transition = ''; // Fjerner gamle overgange, så baggrunden ikke fader væk og viser shoppen
+    container.style.background = ''; // Sikr at der ikke hænger gamle farver (f.eks. rød)
     document.body.style.overflow = 'hidden'; // Lås baggrundens scrollbar fast
     container.innerHTML = "";
 
@@ -86,7 +88,16 @@ async function openPackInteractive(items, packType) {
         blisterImg.src = closedImgSrc;
         blisterImg.className = 'blister-main-img';
         
-        blisterWrapper.appendChild(blisterImg);
+        // US pakken er ofte tegnet lidt mindre i selve asset-filen, så vi pakker den ind og skalerer den op
+        if (packType === 'blister_us') {
+            const scaleWrapper = document.createElement('div');
+            scaleWrapper.style.transform = "scale(1.2)";
+            scaleWrapper.style.transformOrigin = "center center";
+            scaleWrapper.appendChild(blisterImg);
+            blisterWrapper.appendChild(scaleWrapper);
+        } else {
+            blisterWrapper.appendChild(blisterImg);
+        }
 
         const cardContainer = document.createElement('div');
         cardContainer.className = 'blister-card-container';
@@ -179,6 +190,317 @@ async function openPackInteractive(items, packType) {
         return;
     }
 
+    // --- ELITE RAMM PACK LOGIC (SPECIAL EDITION RAMMS) ---
+    if (packType === 'elite_ramm') {
+        const eliteWrapper = document.createElement('div');
+        eliteWrapper.className = 'elite-ramm-wrapper';
+        eliteWrapper.style.cssText = 'display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; margin-top:5vh;';
+
+        const boxImg = document.createElement('img');
+        boxImg.src = 'assets/shop/special_edition_ramm_set.gif';
+        boxImg.style.cssText = 'width:380px; max-width:90vw; object-fit:contain; transition: all 0.3s ease-out; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4)); z-index:2; position:relative;';
+        
+        const itemsContainer = document.createElement('div');
+        itemsContainer.style.cssText = 'display:flex; gap:25px; justify-content:center; align-items:center; flex-wrap:wrap; perspective:1000px; margin-bottom:-120px; z-index:5; position:relative;';
+
+        // Forbered figurerne, men skjul dem nede i "kassen" til at starte med
+        const renderedItems = items.map((item, index) => {
+            const el = createFigureElement(item, true, item.status === 'NEW' ? "NEW" : item.status);
+            el.style.opacity = '0';
+            el.style.transform = 'scale(0.2) translateY(150px) rotateX(45deg)'; // Længere ned for at starte bag kassen
+            el.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; // Giver en fjedrende "pop" effekt
+            el.style.cursor = 'pointer';
+            el.onclick = (e) => { e.stopPropagation(); showBigReveal(item); };
+            itemsContainer.appendChild(el);
+            return { el, item, index };
+        });
+
+        // Bytter om på rækkefølgen så figurer er over kassen
+        eliteWrapper.appendChild(itemsContainer);
+        eliteWrapper.appendChild(boxImg);
+        scene.appendChild(eliteWrapper);
+
+        // 1. Kassen ryster
+        await wait(500);
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier3');
+        boxImg.classList.add('tier-3-heavy-shake');
+        boxImg.style.filter = 'drop-shadow(0 0 30px rgba(255, 215, 0, 0.8))';
+        await wait(2000);
+
+        // 2. Fade ud og skift til den åbne kasse
+        boxImg.style.opacity = '0';
+        await wait(300);
+        boxImg.src = 'assets/shop/special_edition_ramm_set_open.gif'; // HUSK AT OPRETTE DENNE FIL!
+        boxImg.classList.remove('tier-3-heavy-shake');
+        
+        // Skub kassen i baggrunden, gør den falmet og flyt den ned
+        boxImg.style.zIndex = '0';
+        boxImg.style.transform = 'scale(1.15) translateY(80px)'; // Større og skubbet kraftigt ned
+        boxImg.style.filter = 'drop-shadow(0 0 15px rgba(255, 215, 0, 0.4)) brightness(0.6)';
+        boxImg.style.opacity = '0.8';
+        
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier3');
+        
+        document.body.classList.add('screen-shake');
+        await wait(300);
+        document.body.classList.remove('screen-shake');
+
+        // 3. "Pling Pling Pling" pop-out animation
+        for (const { el, item, index } of renderedItems) {
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier2'); // Pop lyd
+            el.style.opacity = '1';
+            
+            // V-Formation: Hæv yderste kort (index 0 og 2), og sænk det midterste (index 1)
+            const finalY = (index === 1) ? '20px' : '-40px';
+            el.style.transform = `scale(1.3) translateY(${finalY}) rotateX(0)`;
+
+            const baseEl = el.querySelector('.figure-base');
+            if (baseEl) baseEl.style.boxShadow = "0 0 25px var(--gold)";
+            el.classList.add('juicy-shake');
+            el.classList.add('revealed'); // Sikrer at navn og Power vises!
+            
+            await wait(400); // Vent lidt før næste figur popper
+        }
+
+        await wait(1000);
+        showCloseButton(packType);
+        return;
+    }
+
+    // --- ELITE JANGUTZ LOGIC (MYTHIC) ---
+    if (packType === 'elite_jangutz') {
+        const eliteWrapper = document.createElement('div');
+        eliteWrapper.className = 'elite-jangutz-wrapper';
+        // Nyt absolut layout: Låser elementerne fast, så de ikke skrider under skalering
+        eliteWrapper.style.cssText = 'position:relative; width:100%; height:60vh; min-height:450px; display:flex; justify-content:center; margin-top:5vh;';
+
+        const boxImg = document.createElement('img');
+        boxImg.src = 'assets/shop/jangutz_pack.gif';
+        boxImg.style.cssText = 'position:absolute; bottom:0; width:300px; max-width:80vw; object-fit:contain; transition: all 0.4s ease-out; filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.2)); z-index:2;';
+
+        const itemContainer = document.createElement('div');
+        itemContainer.style.cssText = 'position:absolute; bottom:90px; z-index:5; perspective:1000px; display:flex; justify-content:center; width:100%;';
+
+        const item = items[0]; // Jangutz Khan
+        const el = createFigureElement(item, true, item.status === 'NEW' ? "NEW" : item.status);
+        el.style.opacity = '0';
+        el.style.transformOrigin = 'bottom center'; // Vokser solidt fra fødderne
+        el.style.transform = 'scale(0.2) rotateX(70deg)'; // Ligger fladt nede i kassen (ingen translateY nødvendig nu!)
+        el.style.transition = 'all 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        el.style.cursor = 'pointer';
+        el.onclick = (e) => { e.stopPropagation(); showBigReveal(item); };
+        
+        itemContainer.appendChild(el);
+        // Bytter om på rækkefølgen så figur er over kassen
+        eliteWrapper.appendChild(itemContainer);
+        eliteWrapper.appendChild(boxImg);
+        scene.appendChild(eliteWrapper);
+
+        // 1. Dyster opbygning
+        await wait(500);
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier4');
+        container.style.transition = "background 2s";
+        container.style.background = "radial-gradient(circle at center, rgba(40, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.99) 100%)"; // Blodrød glød bagved
+        boxImg.classList.add('tier-3-heavy-shake');
+        boxImg.style.filter = 'drop-shadow(0 0 40px rgba(255, 0, 0, 0.8)) brightness(0.8) contrast(1.5)';
+        await wait(2000);
+
+        // 2. Skælv og energi-overload
+        boxImg.style.setProperty('--glitch-color', '#ff0000');
+        boxImg.classList.add('tier-4-glitch');
+        document.body.classList.add('screen-shake');
+        await wait(1800);
+        document.body.classList.remove('screen-shake');
+
+        // 3. Eksplosion og skift til åben kasse
+        boxImg.style.opacity = '0';
+        boxImg.style.transform = 'scale(1.5)'; // Pakken "sprænger" visuelt
+        await wait(300);
+        
+        boxImg.src = 'assets/shop/jangutz_pack_open.gif'; // HUSK AT OPRETTE DENNE FIL!
+        boxImg.classList.remove('tier-4-glitch', 'tier-3-heavy-shake');
+        
+        // Skub kassen i baggrunden, gør den falmet og flyt den ned
+        boxImg.style.zIndex = '0';
+        boxImg.style.transform = 'translateY(40px)'; // Rykker kassen let ned (ingen scale)
+        boxImg.style.filter = 'drop-shadow(0 0 20px rgba(255, 0, 0, 0.4)) brightness(0.6)';
+        boxImg.style.opacity = '0.8';
+
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier4');
+        
+        // Et sidste kraftigt ryst, når han popper op
+        document.body.classList.add('screen-shake');
+        await wait(300);
+        document.body.classList.remove('screen-shake');
+        
+        // Jangutz stiger op!
+        el.style.opacity = '1';
+        el.style.transform = 'scale(1.4) rotateX(0)'; // Rejser sig op direkte fra sit ankerpunkt nede i æsken
+        
+        const baseEl = el.querySelector('.figure-base');
+        if (baseEl) baseEl.style.boxShadow = "0 0 40px var(--red), 0 0 60px var(--gold)";
+        el.classList.add('juicy-shake');
+        el.classList.add('revealed'); // Sikrer at navn og Power vises!
+
+        announceDrop(item, 4000, packType); // Din eksisterende announceDrop tager sig allerede fantastisk af E-ramm/Jangutz!
+        
+        await wait(1500);
+        showCloseButton(packType);
+        return;
+    }
+
+    // --- SCIROID BATTLESHIP LOGIC ---
+    if (packType === 'battleship') {
+        const battleWrapper = document.createElement('div');
+        battleWrapper.className = 'battleship-wrapper';
+        battleWrapper.style.cssText = 'position:relative; width:100%; min-height:80vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; margin-top:2vh; z-index:1; padding-bottom: 50px;';
+
+        // INTRO BOXES
+        const introContainer = document.createElement('div');
+        introContainer.style.cssText = 'position:absolute; top:45%; transform:translateY(-50%); display:flex; justify-content:center; align-items:center; width:100%; z-index:10; pointer-events:none;';
+
+        const closedBox = document.createElement('img');
+        closedBox.src = 'assets/shop/sciroid_battleship_box.gif';
+        closedBox.style.cssText = 'position:absolute; width:500px; max-width:90vw; object-fit:contain; transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);';
+
+        const openBox = document.createElement('img');
+        openBox.src = 'assets/shop/sciroid_battleship_box_open.gif';
+        openBox.style.cssText = 'position:absolute; width:500px; max-width:90vw; object-fit:contain; opacity:0; transition: all 0.5s ease;';
+
+        introContainer.appendChild(openBox);
+        introContainer.appendChild(closedBox);
+        battleWrapper.appendChild(introContainer);
+
+        // ITEM ROWS
+        const topRow = document.createElement('div');
+        topRow.style.cssText = 'display:flex; flex-wrap:wrap; gap:15px; justify-content:center; margin-bottom: 30px; width:100%; max-width:800px; z-index:2; opacity:0; transition: opacity 0.5s;';
+        
+        const middleRow = document.createElement('div');
+        middleRow.style.cssText = 'display:flex; flex-wrap:wrap; gap:30px; justify-content:center; margin-bottom: 40px; width:100%; z-index:3;';
+
+        const bottomRow = document.createElement('div');
+        bottomRow.style.cssText = 'display:flex; justify-content:center; width:100%; z-index:4;';
+
+        battleWrapper.appendChild(topRow);
+        battleWrapper.appendChild(middleRow);
+        battleWrapper.appendChild(bottomRow);
+        scene.appendChild(battleWrapper);
+
+        let podItemData = null;
+        let podEl = null;
+        let podClosedImg = null;
+        
+        const sciroidEls = [];
+        const topEls = [];
+
+        items.forEach((item) => {
+            const isCard = (typeof cardData !== 'undefined' && cardData.some(c => c.id === item.id));
+            
+            if (item.type === 'pod') {
+                podItemData = item;
+                podEl = document.createElement('div');
+                podEl.style.cssText = 'position:relative; transform: scale(2.4); margin-top: 40px; opacity:0; transition: opacity 0.5s; display:flex; flex-direction:column; align-items:center; cursor:pointer;';
+                podEl.onclick = (e) => { e.stopPropagation(); showBigReveal(item); };
+
+                podClosedImg = document.createElement('img');
+                podClosedImg.src = 'assets/sciroid_battleship/sciroid_battleship_pod_closed.gif';
+                podClosedImg.style.cssText = 'width:180px; object-fit:contain; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.8)); transition: all 0.3s;';
+                
+                podEl.appendChild(podClosedImg);
+                bottomRow.appendChild(podEl);
+            } 
+            else if (item.group === 'Sciroids') {
+                const el = createFigureElement(item, true, item.status === 'NEW' ? "NEW" : item.status);
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(-150px) scale(0.5)';
+                el.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                el.style.cursor = 'pointer';
+                el.onclick = (e) => { e.stopPropagation(); showBigReveal(item); };
+                
+                const wrap = document.createElement('div');
+                wrap.style.cssText = 'position:relative; display:flex; justify-content:center; align-items:center; transform: scale(1.2);';
+                
+                const beam = document.createElement('div');
+                beam.style.cssText = 'position:absolute; top:-400px; width:60px; height:600px; background:linear-gradient(to bottom, rgba(0,255,0,0) 0%, rgba(0,255,0,0.8) 80%, rgba(0,255,0,0) 100%); opacity:0; pointer-events:none; z-index:20; filter:blur(4px); transition: opacity 0.15s ease;';
+                
+                wrap.appendChild(beam);
+                wrap.appendChild(el);
+                middleRow.appendChild(wrap);
+                
+                sciroidEls.push({ wrap, el, beam, item });
+            } 
+            else {
+                const el = isCard ? createAlbumCardElement(item, true, item.status === 'NEW' ? "NEW" : item.status) : createFigureElement(item, true, item.status === 'NEW' ? "NEW" : item.status);
+                const flipWrap = document.createElement('div');
+                flipWrap.className = 'flip-container';
+                flipWrap.innerHTML = '<div class="flip-inner"><div class="flip-front"><img src="assets/bgg/logo_foa_sim.gif" style="width:80%; opacity:0.5; filter:grayscale(1);"></div><div class="flip-back"></div></div>';
+                flipWrap.querySelector('.flip-back').appendChild(el);
+                flipWrap.style.cursor = 'pointer';
+                flipWrap.onclick = (e) => { e.stopPropagation(); showBigReveal(item); };
+                topRow.appendChild(flipWrap);
+                topEls.push({ flipWrap, el, item });
+            }
+        });
+
+        // ANIMATION SEQUENCE
+        await wait(500);
+        
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'swipe-1');
+        closedBox.style.transform = 'translateX(-100vw) rotateY(-20deg)';
+        closedBox.style.opacity = '0';
+        openBox.style.opacity = '1';
+        
+        await wait(500); // Vises lynhurtigt i et halvt sekund
+        openBox.style.opacity = '0';
+        openBox.style.transform = 'scale(0.8)';
+        await wait(300);
+
+        topRow.style.opacity = '1';
+        for (const { flipWrap } of topEls) flipWrap.classList.add('flipped');
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier2');
+        await wait(500);
+
+        podEl.style.opacity = '1';
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier3');
+        podClosedImg.classList.add('tier-3-heavy-shake');
+        podClosedImg.style.filter = 'drop-shadow(0 0 30px #00ff00)';
+        await wait(1500);
+
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier3');
+        podClosedImg.style.display = 'none';
+        const revealedPodEl = createFigureElement(podItemData, true, podItemData.status === 'NEW' ? "NEW" : podItemData.status);
+        revealedPodEl.style.transform = 'scale(1.2)';
+        revealedPodEl.style.filter = 'drop-shadow(0 0 25px #00ff00)';
+        revealedPodEl.classList.add('revealed');
+        podEl.appendChild(revealedPodEl);
+        await wait(500);
+
+        container.style.transition = "background 0.5s";
+        container.style.background = "radial-gradient(circle at center, rgba(0, 30, 0, 0.95) 0%, rgba(0, 0, 0, 0.99) 100%)";
+        
+        for (const { el, beam, item } of sciroidEls) {
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier2');
+            beam.style.opacity = '1';
+            await wait(50);
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0) scale(1)';
+            const baseEl = el.querySelector('.figure-base');
+            if (baseEl) baseEl.style.boxShadow = "0 0 25px #00ff00";
+            el.classList.add('juicy-shake');
+            el.classList.add('revealed'); // Sikrer at navn og Power vises!
+            await wait(100);
+            beam.style.opacity = '0';
+            await wait(150);
+        }
+
+        const sciroids = items.filter(i => i.group === 'Sciroids');
+        if (sciroids.length > 0) announceDrop(sciroids[0], 3000, packType);
+
+        await wait(1500);
+        showCloseButton(packType);
+        return;
+    }
+
     // 1. SORTERING: Standard først, derefter Rares (for spænding)
     const isSpecial = (item) => {
         // Fallback: Hvis item mangler gruppe (gamle data), slå det op
@@ -209,6 +531,7 @@ async function openPackInteractive(items, packType) {
     
     // Skelnen mellem "Major Specials" (Store bokse) og "Minor Specials" (Side items)
     const isMajorSpecial = (item) => {
+        if (item.name === 'SCIROID BATTLESHIP') return true;
         // Kort er aldrig Major (skal ud i vingerne)
         if (typeof cardData !== 'undefined' && cardData.some(c => c.id === item.id)) return false;
 
@@ -266,7 +589,7 @@ async function openPackInteractive(items, packType) {
             displayType = 'side_item'; // Ny type for Våben/PPs
         }
 
-        let el;
+        let el, flipEl = null, beam = null;
         if (displayType === 'box') {
             // MYSTERY BOX SETUP
             el = document.createElement('div');
@@ -286,6 +609,44 @@ async function openPackInteractive(items, packType) {
             const mc = el.querySelector('.mystery-item');
             mc.appendChild(renderedItemEl);
 
+        } else if (displayType === 'battleship_pod_box') {
+            el = document.createElement('div');
+            el.className = 'mystery-box-wrapper';
+            if (isLarge) { el.style.transform = "scale(1.5)"; el.style.margin = "0 3cqw"; }
+            el.innerHTML = `
+                <div class="mystery-box-mover">
+                    <img src="assets/sciroid_battleship/sciroid_battleship_pod_closed.gif" class="mystery-box-img pod-img">
+                </div>
+                <div class="mystery-item"></div>
+            `;
+            el.querySelector('.mystery-item').appendChild(renderedItemEl);
+            
+        } else if (displayType === 'beam_down') {
+            el = document.createElement('div');
+            if (isLarge) { el.style.transform = "scale(1.5)"; el.style.margin = "0 3cqw"; }
+            el.style.position = 'relative';
+            el.style.display = 'flex';
+            el.style.justifyContent = 'center';
+            el.style.alignItems = 'center';
+            
+            beam = document.createElement('div');
+            beam.style.cssText = 'position:absolute; top:-400px; width:60px; height:500px; background:linear-gradient(to bottom, rgba(0,255,0,0) 0%, rgba(0,255,0,0.8) 80%, rgba(0,255,0,0) 100%); opacity:0; pointer-events:none; z-index:20; filter:blur(4px); transition: opacity 0.2s ease;';
+            
+            flipEl = document.createElement('div');
+            flipEl.className = 'flip-container';
+            flipEl.style.opacity = '0';
+            flipEl.style.transform = 'translateY(-150px) scale(0.5)';
+            flipEl.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            flipEl.innerHTML = `
+                <div class="flip-inner">
+                    <div class="flip-front"><img src="assets/bgg/logo_foa_sim.gif" style="width:80%; opacity:0.5; filter:grayscale(1);"></div>
+                    <div class="flip-back"></div>
+                </div>
+            `;
+            flipEl.querySelector('.flip-back').appendChild(renderedItemEl);
+            
+            el.appendChild(beam);
+            el.appendChild(flipEl);
         } else {
             // FLIP CARD SETUP (Standard, Blister, Epic)
             el = document.createElement('div');
@@ -309,7 +670,7 @@ async function openPackInteractive(items, packType) {
         }
 
         containerRow.appendChild(el);
-        itemElements.push({ el, item, displayType, element: renderedItemEl });
+        itemElements.push({ el, item, displayType, element: renderedItemEl, flipEl, beam });
     };
 
     // 2. RENDERING AF SPECIALS (Øverste række - Store bokse)
@@ -349,7 +710,8 @@ async function openPackInteractive(items, packType) {
 
     await wait(500); // Start pause
 
-    for (const { el, item, displayType, element } of revealSequence) {
+    for (const seqItem of revealSequence) {
+        const { el, item, displayType, element, flipEl, beam } = seqItem;
         
         const applyJuice = () => {
             const baseEl = element.querySelector('.figure-base');
@@ -451,6 +813,46 @@ async function openPackInteractive(items, packType) {
             await wait(500); // Kortere pause for at holde flowet
             container.style.background = "rgba(0,0,0,0.95)"; // Reset bg
         }
+        else if (displayType === 'battleship_pod_box') {
+            const boxImg = el.querySelector('.mystery-box-img');
+            const hiddenItem = el.querySelector('.mystery-item');
+            
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier3');
+            boxImg.classList.add('tier-3-heavy-shake'); 
+            boxImg.style.filter = 'drop-shadow(0 0 20px #00ff00)';
+            await wait(2000);
+
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier3');
+            boxImg.src = "assets/sciroid_battleship/sciroid_battleship_pod_open.gif";
+            boxImg.classList.remove('tier-3-heavy-shake');
+            hiddenItem.classList.add('popped');
+            
+            await wait(500);
+            element.classList.add('revealed');
+            applyJuice();
+            await wait(500);
+        }
+        else if (displayType === 'beam_down') {
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'riser-tier4');
+            container.style.transition = "background 1s";
+            container.style.background = "radial-gradient(circle at center, rgba(0, 30, 0, 0.95) 0%, rgba(0, 0, 0, 0.99) 100%)";
+            
+            beam.style.opacity = '1';
+            await wait(150);
+            flipEl.style.opacity = '1';
+            flipEl.style.transform = 'translateY(0) scale(1)';
+            flipEl.classList.add('flipped');
+            if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier4');
+            await wait(150);
+            beam.style.opacity = '0';
+            
+            await wait(400);
+            element.classList.add('revealed');
+            applyJuice();
+            announceDrop(item, 2800, packType);
+            await wait(1500);
+            container.style.background = "rgba(0,0,0,0.95)"; // Reset bg
+        }
 
         else if (displayType === 'blister_special') {
             // BLISTER SPECIAL (Ingen boks, men ryst kortet)
@@ -545,6 +947,8 @@ function showBigReveal(item) {
     // Fallback for Pods (som ikke har ID i data listerne)
     if (item.type === 'pod') {
         base = { name: item.name, img: item.img, release: 'RESOURCE' };
+    } else if (item.type === 'merch') {
+        base = { name: item.name, img: item.img, release: 'MERCH' };
     }
 
     const imgFilter = base && base.cssFilter ? base.cssFilter : 'none';
@@ -595,6 +999,7 @@ function showBigReveal(item) {
     }
     
     if(item.type === 'pod') { bar.style.background = item.color || '#444'; }
+    else if(item.type === 'merch') { bar.style.background = '#888'; }
     
     document.getElementById('bigTL').innerText = item.id ? `#${item.id}` : (item.type === 'pod' ? 'POD' : '');
     const displayRelease = item.release || (base && (base.releases ? base.releases[0] : base.release));
