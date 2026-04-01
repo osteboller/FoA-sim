@@ -63,6 +63,7 @@
 .auto-battle-label input { width:16px; height:16px; }
 
 .battle-field { position:relative; width:100%; aspect-ratio:16/9; max-width:1000px; margin:0 auto 20px auto; background:radial-gradient(circle at center, #1a1d2e 0%, #05050a 100%); border-radius:15px; border:1px solid #333; overflow:hidden; container-type:inline-size; }
+
 .battle-enemy-bench { position:absolute; top:2%; left:5%; display:flex; gap:1cqw; flex-wrap:nowrap; max-width: 80%; align-items: flex-start; }
 .battle-enemy-active { position:absolute; top:15%; right:15%; width:15cqw; aspect-ratio:11/15; display:flex; justify-content:center; align-items:center; }
 .battle-player-active { position:absolute; bottom:15%; left:15%; width:15cqw; aspect-ratio:11/15; display:flex; justify-content:center; align-items:center; }
