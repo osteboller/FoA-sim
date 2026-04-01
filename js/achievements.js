@@ -171,7 +171,7 @@ function renderAchievements() {
             const badgeHtml = hasUnclaimed ? `<div style="position:absolute; top:-10px; right:-10px; background:var(--red); color:#fff; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem; box-shadow:0 0 15px var(--red); animation: pulse 2s infinite; z-index:10;">!</div>` : '';
 
             gridHtml += `
-                <div onclick="currentAchievementCategory='${key}'; renderAchievements()" style="position:relative; background:var(--panel); border:1px solid ${isAllDone ? 'var(--gold)' : (hasUnclaimed ? 'var(--red)' : '#333')}; border-radius:15px; padding:20px; cursor:pointer; transition:transform 0.2s; box-shadow: ${hasUnclaimed ? '0 0 15px rgba(255,0,0,0.4)' : '0 4px 10px rgba(0,0,0,0.3)'};" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                <div onclick="currentAchievementCategory='${key}'; renderAchievements(); if(typeof updateAchievementSubmenuUI === 'function') updateAchievementSubmenuUI();" style="position:relative; background:var(--panel); border:1px solid ${isAllDone ? 'var(--gold)' : (hasUnclaimed ? 'var(--red)' : '#333')}; border-radius:15px; padding:20px; cursor:pointer; transition:transform 0.2s; box-shadow: ${hasUnclaimed ? '0 0 15px rgba(255,0,0,0.4)' : '0 4px 10px rgba(0,0,0,0.3)'};" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
                     ${badgeHtml}
                     <div style="font-size:3rem; margin-bottom:10px;">${cat.icon}</div>
                     <h3 style="color:${isAllDone ? 'var(--gold)' : '#fff'}; margin:0 0 5px 0;">${cat.title}</h3>
@@ -193,7 +193,7 @@ function renderAchievements() {
         let listHtml = `
             <div style="text-align:center; max-width:800px; margin:0 auto;">
                 <div style="display:flex; align-items:center; justify-content:center; gap:15px; margin-bottom:20px;">
-                    <button onclick="currentAchievementCategory=null; renderAchievements()" style="background:#333; border:none; color:#fff; width:40px; height:40px; border-radius:50%; cursor:pointer; font-weight:bold; font-size:1.2rem;">⬅</button>
+                    <button onclick="currentAchievementCategory=null; renderAchievements(); if(typeof updateAchievementSubmenuUI === 'function') updateAchievementSubmenuUI();" style="background:#333; border:none; color:#fff; width:40px; height:40px; border-radius:50%; cursor:pointer; font-weight:bold; font-size:1.2rem;">⬅</button>
                     <h2 style="color:var(--gold); text-transform:uppercase; letter-spacing:2px; margin:0;">${cat.icon} ${cat.title}</h2>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:10px;">

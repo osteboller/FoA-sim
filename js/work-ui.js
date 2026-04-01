@@ -1,6 +1,7 @@
 function switchWorkTab(tab) {
     state.activeWorkTab = tab;
     renderWorkPage();
+    if (typeof updateWorkSubmenuUI === 'function') updateWorkSubmenuUI();
 }
 
 function initWorkPage() {

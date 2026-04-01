@@ -1,7 +1,24 @@
 // --- PACK OPENER & ANIMATIONS ---
 
+let skipOpenerAnimation = false;
+let activeWaitResolvers = [];
+
 // Helper for async delays
-const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const wait = (ms) => new Promise(resolve => {
+    if (skipOpenerAnimation) return resolve();
+    const timeoutId = setTimeout(() => {
+        activeWaitResolvers = activeWaitResolvers.filter(r => r.id !== timeoutId);
+        resolve();
+    }, ms);
+    activeWaitResolvers.push({ id: timeoutId, resolve: () => { clearTimeout(timeoutId); resolve(); } });
+});
+
+function skipPackAnimation() {
+    skipOpenerAnimation = true;
+    activeWaitResolvers.forEach(r => r.resolve());
+    activeWaitResolvers = [];
+    document.body.classList.remove('screen-shake');
+}
 
 function tiltPack(e) {
     const btn = e.currentTarget;
@@ -44,6 +61,29 @@ async function openPackInteractive(items, packType) {
     container.style.background = ''; // Sikr at der ikke hænger gamle farver (f.eks. rød)
     document.body.style.overflow = 'hidden'; // Lås baggrundens scrollbar fast
     container.innerHTML = "";
+
+    skipOpenerAnimation = false;
+    
+    // Skab et usynligt klik-lag over hele animationen til at skippe
+    const skipOverlay = document.createElement('div');
+    skipOverlay.id = 'skip-opener-overlay';
+    skipOverlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; cursor:pointer;';
+    skipOverlay.title = "Klik for at springe animationen over";
+    skipOverlay.onclick = () => {
+        skipPackAnimation();
+        skipOverlay.style.pointerEvents = 'none';
+    };
+    container.appendChild(skipOverlay);
+
+    // Midlertidig mute af "riser" og buildup lyde, hvis man trykker skip
+    window.originalAudioPlay = null;
+    if (typeof AudioManager !== 'undefined' && AudioManager.sfx && AudioManager.sfx.play) {
+        window.originalAudioPlay = AudioManager.sfx.play;
+        AudioManager.sfx.play = function(cat, snd) {
+            if (skipOpenerAnimation && cat === 'shop' && (snd.includes('riser') || snd.includes('swipe'))) return;
+            window.originalAudioPlay.call(AudioManager.sfx, cat, snd);
+        };
+    }
 
     // Opret Scene Wrapper (For responsivitet inden i det fuldskærms mørke overlay)
     const scene = document.createElement('div');
@@ -888,6 +928,16 @@ async function openPackInteractive(items, packType) {
 }
 
 function showCloseButton(packType, sceneContainer) {
+    // Gendan den originale lydafspiller
+    if (typeof window.originalAudioPlay === 'function') {
+        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play = window.originalAudioPlay;
+        window.originalAudioPlay = null;
+    }
+
+    // Slå skip-overlay fra, så man kan klikke på figurerne
+    const skipOverlay = document.getElementById('skip-opener-overlay');
+    if (skipOverlay) skipOverlay.style.pointerEvents = 'none';
+
     const container = document.getElementById('shop-batch');
     if (!container) return;
 

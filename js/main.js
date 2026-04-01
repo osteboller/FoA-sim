@@ -159,13 +159,40 @@ function showPage(p) {
     const navBtn = document.getElementById('nav-'+p);
     if(navBtn) navBtn.classList.add('active');
     
+    // Vis/Skjul Work undermenu i sidemenuen
+    const workSub = document.getElementById('work-submenu');
+    if (workSub) {
+        workSub.style.display = (p === 'work') ? 'flex' : 'none';
+    }
+    
+    // Vis/Skjul Arena undermenu i sidemenuen
+    const arenaSub = document.getElementById('arena-submenu');
+    if (arenaSub) {
+        arenaSub.style.display = (p === 'arena') ? 'flex' : 'none';
+    }
+    
+    // Vis/Skjul Collection undermenu i sidemenuen
+    const colSub = document.getElementById('collection-submenu');
+    if (colSub) {
+        colSub.style.display = (p === 'collection') ? 'flex' : 'none';
+    }
+    
+    // Vis/Skjul Achievements undermenu i sidemenuen
+    const achSub = document.getElementById('achievements-submenu');
+    if (achSub) {
+        achSub.style.display = (p === 'achievements') ? 'flex' : 'none';
+    }
+    
     // Luk popups/modals hvis man navigerer væk
     const detailModal = document.getElementById('detailModal');
     if(detailModal) detailModal.style.display = 'none';
     const revealOverlay = document.getElementById('revealOverlay');
     if(revealOverlay) revealOverlay.style.display = 'none';
     
-    if (p === 'collection') switchCollectionTab('figures');
+    if (p === 'collection') {
+        if (typeof switchCollectionTab === 'function') switchCollectionTab('figures');
+        updateCollectionSubmenuUI();
+    }
 
         if (p === 'home') {
             if (typeof AudioManager !== 'undefined' && hasInteracted) AudioManager.bgm.play('bgm-general');
@@ -174,6 +201,7 @@ function showPage(p) {
         if (p === 'work') {
             if (typeof AudioManager !== 'undefined') AudioManager.bgm.play('bgm-general');
             initWorkPage();
+            if (typeof updateWorkSubmenuUI === 'function') updateWorkSubmenuUI();
         }
         if (p === 'arena') {
             initArena();
@@ -188,9 +216,81 @@ function showPage(p) {
         if (p === 'achievements') currentAchievementCategory = null; // Reset visning FØR vi renderer siden
         if (p === 'achievements' && typeof renderAchievements === 'function') {
             renderAchievements();
+            if (typeof updateAchievementSubmenuUI === 'function') updateAchievementSubmenuUI();
         }
         
         updateUI();
+}
+
+// Håndterer navigation direkte fra den nye undermenu
+function navCollectionTab(tab) {
+    if (typeof switchCollectionTab === 'function') {
+        switchCollectionTab(tab);
+    }
+    updateCollectionSubmenuUI();
+}
+
+// Opdaterer farver og borders i undermenuen, så det matcher det valgte faneblad
+function updateCollectionSubmenuUI() {
+    document.querySelectorAll('.collection-sub-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.borderLeftColor = '#444';
+        btn.style.color = '#888';
+    });
+    const activeBtn = document.getElementById('nav-collection-' + currentCollectionTab);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.style.borderLeftColor = 'var(--red)';
+        activeBtn.style.color = '#fff';
+    }
+}
+
+// Håndterer navigation direkte fra den nye Work undermenu
+function navWorkTab(tab) {
+    if (typeof switchWorkTab === 'function') {
+        switchWorkTab(tab);
+    }
+    updateWorkSubmenuUI();
+}
+
+// Opdaterer farver og borders i undermenuen for Work
+function updateWorkSubmenuUI() {
+    document.querySelectorAll('.work-sub-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.borderLeftColor = '#444';
+        btn.style.color = '#888';
+    });
+    const activeBtn = document.getElementById('nav-work-' + (state.activeWorkTab || 'manual'));
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.style.borderLeftColor = 'var(--red)';
+        activeBtn.style.color = '#fff';
+    }
+}
+
+// Håndterer navigation direkte fra den nye undermenu for Trofæer
+function navAchievementTab(tab) {
+    currentAchievementCategory = tab;
+    if (typeof renderAchievements === 'function') {
+        renderAchievements();
+    }
+    updateAchievementSubmenuUI();
+}
+
+// Opdaterer farver og borders i undermenuen for Trofæer
+function updateAchievementSubmenuUI() {
+    document.querySelectorAll('.ach-sub-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.borderLeftColor = '#444';
+        btn.style.color = '#888';
+    });
+    const activeTabId = currentAchievementCategory ? currentAchievementCategory : 'overview';
+    const activeBtn = document.getElementById('nav-ach-' + activeTabId);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.style.borderLeftColor = 'var(--red)';
+        activeBtn.style.color = '#fff';
+    }
 }
 
 function rollPower(base, drawnRelease = null) {
@@ -439,6 +539,13 @@ function updateUI() {
     if (premiumEl) hideWithLabel(premiumEl, 'KR/SEK');
     // if (pointsEl) hideWithLabel(pointsEl, 'JANGUTZ'); // Keep Jangutz visible
 
+    // Skjul Merch fane og knap hvis man ikke ejer noget merch
+    const hasMerch = state.ownedMerch && state.ownedMerch.length > 0;
+    const navMerchBtn = document.getElementById('nav-collection-merch');
+    const tabMerchBtn = document.getElementById('tab-merch');
+    if (navMerchBtn) navMerchBtn.style.display = hasMerch ? 'block' : 'none';
+    if (tabMerchBtn) tabMerchBtn.style.display = hasMerch ? 'inline-block' : 'none';
+
     // --- Work Page UI ---
     const workPage = document.querySelector('#page-work');
     if (workPage && workPage.classList.contains('active')) {
@@ -511,12 +618,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Skjul REGLER fra menuen (da den nu er i Arena)
-    document.querySelectorAll('nav button').forEach(btn => {
-        if(btn.innerText.toUpperCase().includes('REGLER') || btn.id === 'nav-rules') {
-            btn.style.display = 'none';
-        }
-    });
+    // Skjul den gamle "globale" REGLER knap, men uden at ramme undermenuen
+    const oldRulesBtn = document.getElementById('nav-rules');
+    if(oldRulesBtn) oldRulesBtn.style.display = 'none';
 
     updateUI();
     
@@ -529,6 +633,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- QUICK AUDIO MUTE CONTROLS ---
         const style = document.createElement('style');
         style.innerHTML = `
+            /* Forhindrer double-tap zoom og uønsket markering på mobil */
+            * {
+                -webkit-tap-highlight-color: transparent;
+            }
+            body, button, img, .alien-figure, .pack-display, .shop-btn, .hover-pop {
+                touch-action: manipulation;
+                user-select: none;
+                -webkit-user-select: none;
+            }
             #quick-audio-controls {
                 position: fixed; top: 15px; right: 20px; display: flex; gap: 10px; z-index: 9999;
             }

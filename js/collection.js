@@ -20,9 +20,12 @@ function updateCollection() {
         groups.forEach(groupName => {
             const groupCards = cardData.filter(c => c.group === groupName);
             if (groupCards.length > 0) {
+                const ownedInGroup = groupCards.some(card => state.ownedCards.includes(card.id));
+                const displayTitle = ownedInGroup ? groupName : "?????";
+
                 const section = document.createElement('div');
                 section.className = "album-section";
-                section.innerHTML = `<div class="section-title">${groupName}</div>`;
+                section.innerHTML = `<div class="section-title">${displayTitle}</div>`;
                 const grid = document.createElement('div');
                 grid.className = "row-grid";
                 groupCards.forEach(card => {
