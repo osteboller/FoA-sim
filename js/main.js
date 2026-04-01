@@ -128,6 +128,26 @@ function showPage(p) {
         AudioManager.sfx.play('ui', 'click');
     }
 
+    // Tjek om den klikkede knap allerede er aktiv for at implementere "toggle"
+    const navBtn = document.getElementById('nav-'+p);
+    const isAlreadyActive = navBtn && navBtn.classList.contains('active');
+
+    if (isAlreadyActive) {
+        const submenus = {
+            'work': document.getElementById('work-submenu'),
+            'collection': document.getElementById('collection-submenu'),
+            'arena': document.getElementById('arena-submenu'),
+            'achievements': document.getElementById('achievements-submenu')
+        };
+        const sub = submenus[p];
+        if (sub) {
+            // Toggle synligheden af undermenuen
+            sub.style.display = (sub.style.display === 'none' || sub.style.display === '') ? 'flex' : 'none';
+        }
+        // Afslut funktionen, da vi kun skulle toggle undermenuen, ikke skifte side
+        return;
+    }
+
     // Forhindr spilleren i at forlade arenaen under en aktiv kamp
     const currentPage = document.querySelector('.page.active');
     if (currentPage && currentPage.id === 'page-arena' && p !== 'arena') {
@@ -156,7 +176,6 @@ function showPage(p) {
     const page = document.getElementById('page-'+p);
     if(page) page.classList.add('active');
     
-    const navBtn = document.getElementById('nav-'+p);
     if(navBtn) navBtn.classList.add('active');
     
     // Vis/Skjul Work undermenu i sidemenuen
