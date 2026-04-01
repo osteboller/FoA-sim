@@ -40,6 +40,19 @@ function initArena() {
     headerHTML += renderBattleContainerHTML();
     arenaPage.innerHTML = headerHTML;
 
+    // Opdater sidemenuens undermenu-knapper
+    document.querySelectorAll('.arena-sub-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.borderLeftColor = '#444';
+        btn.style.color = '#888';
+    });
+    const activeSubBtn = document.getElementById('nav-arena-' + currentArenaView);
+    if (activeSubBtn) {
+        activeSubBtn.classList.add('active');
+        activeSubBtn.style.borderLeftColor = 'var(--red)';
+        activeSubBtn.style.color = '#fff';
+    }
+
     if (typeof AudioManager !== 'undefined') AudioManager.bgm.play('draft-theme');
 
     if (currentArenaView === 'builder') {
@@ -57,7 +70,9 @@ function startBattle() {
 
     const menu = document.getElementById('arena-menu-container');
     if(menu) menu.style.display = 'none';
-    document.getElementById('arena-battle').style.display = 'block';
+    const arenaBattle = document.getElementById('arena-battle');
+    arenaBattle.style.display = 'flex';
+    arenaBattle.style.flexDirection = 'column';
     enemySquad = generateEnemy(selectedLevel);
     
     if (typeof AudioManager !== 'undefined') AudioManager.bgm.play('battle-theme');
@@ -65,6 +80,18 @@ function startBattle() {
     const isAuto = document.getElementById('chk-auto-battle').checked;
     battleState = { round: 0, playerScore: 0, enemyScore: 0, history: [], stake: 1, playerMoves: [], auto: isAuto, weaponUsed: false, ppUsed: false, activeWeaponMultiplier: 1, activeWeaponBonus: 0, phase: 'ready', aborted: false };
     
+    // Opdater den nye Zone Header med farve og tekst
+    const currentLvl = parseInt(selectedLevel) || 1;
+    const zone = levelZones.find(z => currentLvl >= z.range[0] && currentLvl <= z.range[1]) || levelZones[levelZones.length - 1];
+    const headerEl = document.getElementById('battle-zone-header');
+    if (headerEl) {
+        headerEl.style.background = `linear-gradient(90deg, #111 0%, ${zone.color} 50%, #111 100%)`;
+        headerEl.style.borderTop = `2px solid ${zone.color}`;
+        headerEl.style.borderBottom = `2px solid ${zone.color}`;
+        const modeHeader = isEndlessMode ? "Endless Mode" : `Niveau ${selectedLevel}`;
+        headerEl.innerHTML = `<span style="text-shadow: 0 2px 4px rgba(0,0,0,0.9);">${zone.name} - ${modeHeader}</span>`;
+    }
+
     const modeText = isEndlessMode ? "Endless Modstander" : "Modstander";
     document.getElementById('battle-log').innerHTML = `<div>${modeText} fundet (Niveau ${selectedLevel}). Knyt næverne!</div>`;
     
@@ -82,6 +109,10 @@ function startBattle() {
             wInd.style.display = 'none';
         }
     }
+
+    // Vis "Giv Op" knappen igen
+    const surrenderBtn = document.querySelector('.btn-surrender');
+    if (surrenderBtn) surrenderBtn.style.visibility = 'visible';
 
     updateBattleControls();
     if(isAuto) startAutoBattleTimer();
@@ -440,6 +471,10 @@ function endMatch() {
     
     logEl.innerHTML = logMsg + "<div style='margin-top:8px; padding-top:8px; border-top:1px solid #333; opacity:0.6;'>" + logEl.innerHTML + "</div>";
     if (bottomControls) bottomControls.innerHTML = "";
+
+    // Skjul "Giv Op" knappen når kampen er slut
+    const surrenderBtn = document.querySelector('.btn-surrender');
+    if (surrenderBtn) surrenderBtn.style.visibility = 'hidden';
 
     const outcome = isWin ? 'win' : (battleState.enemyScore > battleState.playerScore ? 'lose' : 'draw');
 

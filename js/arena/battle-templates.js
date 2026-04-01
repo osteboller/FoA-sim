@@ -1,6 +1,11 @@
 function renderBattleContainerHTML() {
     return `
         <div id="arena-battle" class="arena-battle-container" style="display:none;">
+            <!-- NYT TOP PANEL (Modstander Portræt / Zone Farve) -->
+            <div id="battle-zone-header" style="min-height: 70px; background: #222; border-radius: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 2px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.5);">
+                KAMP KLARGØRES...
+            </div>
+
             <!-- Top Bar -->
             <div class="battle-top-bar">
                 <button id="btn-surrender" onclick="surrenderBattle()" class="btn-surrender">🏳️ GIV OP</button>
