@@ -755,6 +755,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 #main-content {
                     margin-left: 0;
                     padding: 10px;
+                    padding-bottom: 150px; /* Ekstra luft i bunden så man kan scrolle forbi mobilens menulinje */
                     box-sizing: border-box;
                     height: 100%;
                     overflow-y: auto; /* Giver KUN main-content en scrollbar */
