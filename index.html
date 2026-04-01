@@ -2,6 +2,7 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Fistful of Aliens - Simulator v.0.1 </title>
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/animations.css">
@@ -29,10 +30,39 @@
         </div>
 
         <button onclick="showPage('work')" id="nav-work" class="active">🛠️ PLIGTER</button>
+        
+        <div id="work-submenu" style="display: none; flex-direction: column; margin-left: 15px; gap: 5px; margin-bottom: 10px;">
+            <button onclick="navWorkTab('manual')" id="nav-work-manual" class="work-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">💪 MANUELT</button>
+            <button onclick="navWorkTab('passive')" id="nav-work-passive" class="work-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">💤 PASSIVT</button>
+        </div>
+
         <button onclick="showPage('shop')" id="nav-shop">🛒 SHOP</button>
         <button onclick="showPage('collection')" id="nav-collection">📖 SAMLING</button>
+        
+        <div id="collection-submenu" style="display: none; flex-direction: column; margin-left: 15px; gap: 5px; margin-bottom: 10px;">
+            <button onclick="navCollectionTab('figures')" id="nav-collection-figures" class="collection-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">👽 FIGURER</button>
+            <button onclick="navCollectionTab('gear')" id="nav-collection-gear" class="collection-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">🎒 UDSTYR</button>
+            <button onclick="navCollectionTab('album')" id="nav-collection-album" class="collection-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">🎴 KORT</button>
+            <button onclick="navCollectionTab('merch')" id="nav-collection-merch" class="collection-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">🧢 MERCH</button>
+        </div>
+
         <button onclick="showPage('arena')" id="nav-arena">⚔️ ARENA</button>
+        
+        <div id="arena-submenu" style="display: none; flex-direction: column; margin-left: 15px; gap: 5px; margin-bottom: 10px;">
+            <button onclick="switchArenaView('builder')" id="nav-arena-builder" class="arena-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">🔧 BYG HOLD</button>
+            <button onclick="switchArenaView('levels')" id="nav-arena-levels" class="arena-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">🗺️ KAMPAGNE</button>
+            <button onclick="switchArenaView('rules')" id="nav-arena-rules" class="arena-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">📜 REGLER</button>
+        </div>
         <button onclick="showPage('achievements')" id="nav-achievements">🏆 TROFÆER</button>
+        
+        <div id="achievements-submenu" style="display: none; flex-direction: column; margin-left: 15px; gap: 5px; margin-bottom: 10px;">
+            <button onclick="navAchievementTab(null)" id="nav-ach-overview" class="ach-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">📋 OVERSIGT</button>
+            <button onclick="navAchievementTab('economy')" id="nav-ach-economy" class="ach-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">💰 ØKONOMI</button>
+            <button onclick="navAchievementTab('collection')" id="nav-ach-collection" class="ach-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">📖 SAMLER</button>
+            <button onclick="navAchievementTab('arena')" id="nav-ach-arena" class="ach-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">⚔️ GLADIATOR</button>
+            <button onclick="navAchievementTab('secrets')" id="nav-ach-secrets" class="ach-sub-btn" style="font-size: 0.85rem; padding: 10px; text-align: left; border-left: 2px solid #444; border-radius: 0 8px 8px 0; background: transparent; color: #888; transition: color 0.2s, border-color 0.2s;">👻 SECRETS</button>
+        </div>
+
         <button onclick="showPage('rules')" id="nav-rules">📜 REGLER</button>
         
         <button onclick="if(typeof AudioManager !== 'undefined') AudioManager.sfx.play('ui', 'popup-open'); document.getElementById('audioModal').style.display='flex'" id="nav-audio" style="margin-top:20px;">🔊 LYD</button>
@@ -136,10 +166,10 @@
         <div id="page-collection" class="page">
             <div style="text-align:center;"><h2>SAMLING</h2></div>
             <div class="collection-tabs">
-                <button class="tab-btn active" onclick="switchCollectionTab('figures')" id="tab-figures">FIGURER</button>
-                <button class="tab-btn" onclick="switchCollectionTab('gear')" id="tab-gear">UDSTYR</button>
-                <button class="tab-btn" onclick="switchCollectionTab('album')" id="tab-album">ALBUM (KORT)</button>
-                <button class="tab-btn" onclick="switchCollectionTab('merch')" id="tab-merch">MERCH</button>
+                <button class="tab-btn active" onclick="switchCollectionTab('figures'); updateCollectionSubmenuUI();" id="tab-figures">FIGURER</button>
+                <button class="tab-btn" onclick="switchCollectionTab('gear'); updateCollectionSubmenuUI();" id="tab-gear">UDSTYR</button>
+                <button class="tab-btn" onclick="switchCollectionTab('album'); updateCollectionSubmenuUI();" id="tab-album">ALBUM (KORT)</button>
+                <button class="tab-btn" onclick="switchCollectionTab('merch'); updateCollectionSubmenuUI();" id="tab-merch">MERCH</button>
             </div>
             <div class="controls" id="collection-controls">
                 <span>SORTER:</span>
