@@ -12,12 +12,12 @@ function initWorkPage() {
         <div class="page-content">
             <h2 class="page-title" style="color:var(--gold); text-transform:uppercase; letter-spacing:2px;">Tjen Penge</h2>
 
-            <div class="stats-container">
-                <div class="stat-box">
+            <div class="stats-container" style="display: flex; flex-direction: row; justify-content: center; gap: 15px; flex-wrap: nowrap; margin-bottom: 20px;">
+                <div class="stat-box" style="flex: 1; min-width: 0;">
                     <div class="stat-label">KR. / KLIK</div>
                     <div id="ui-click-power" class="stat-value" style="color:var(--blue);">1.00</div>
                 </div>
-                <div class="stat-box">
+                <div class="stat-box" style="flex: 1; min-width: 0;">
                     <div class="stat-label">KR. / SEK</div>
                     <div id="ui-auto-power" class="stat-value" style="color:var(--green);">0.00</div>
                 </div>

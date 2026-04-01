@@ -41,6 +41,12 @@ function save() {
 }
 
 function resetGame() {
+    // Luk sidemenuen, så bekræftelses-dialogen er fuldt synlig på mobil
+    const nav = document.querySelector('nav');
+    if (nav && nav.classList.contains('open')) {
+        toggleNav();
+    }
+
     showConfirm(
         "Er du sikker på, at du vil slette alt og starte forfra? Denne handling kan ikke fortrydes.", 
         "Nulstil Spil?", 
@@ -49,6 +55,16 @@ function resetGame() {
             location.reload();
         }
     );
+}
+
+function toggleNav() {
+    const nav = document.querySelector('nav');
+    if (nav) {
+        nav.classList.toggle('open');
+        // Viser/skjuler et mørkt lag bag menuen, så man kan lukke den ved at klikke udenfor
+        const overlay = document.getElementById('menu-overlay');
+        if (overlay) overlay.style.display = nav.classList.contains('open') ? 'block' : 'none';
+    }
 }
 
 // --- Custom Modal Functions ---
@@ -148,11 +164,17 @@ function showPage(p) {
         return;
     }
 
+    // Hvis sidemenuen er åben på mobil, luk den når vi navigerer til en ny side
+    const nav = document.querySelector('nav');
+    if (nav && nav.classList.contains('open')) {
+        toggleNav();
+    }
+
     // Forhindr spilleren i at forlade arenaen under en aktiv kamp
     const currentPage = document.querySelector('.page.active');
     if (currentPage && currentPage.id === 'page-arena' && p !== 'arena') {
         const arenaBattle = document.getElementById('arena-battle');
-        if (arenaBattle && arenaBattle.style.display === 'block') {
+        if (arenaBattle && (arenaBattle.style.display === 'block' || arenaBattle.style.display === 'flex')) {
             // Tjek om kampen rent faktisk er afsluttet
             let isGameOver = false;
             if (typeof battleState !== 'undefined' && battleState) {
@@ -678,6 +700,148 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             @media (max-width: 768px) {
                 #quick-audio-controls { right: 15px; top: 15px; }
+            }
+
+            #hamburger-btn {
+                display: none; /* Skjult på PC som standard */
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                z-index: 10001;
+                width: 45px;
+                height: 45px;
+                background: rgba(0,0,0,0.5);
+                border: 1px solid #444;
+                border-radius: 50%;
+                cursor: pointer;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 5px;
+                padding: 10px;
+                backdrop-filter: blur(5px);
+            }
+            #hamburger-btn span {
+                display: block;
+                width: 100%;
+                height: 3px;
+                background: #fff;
+                border-radius: 2px;
+                transition: all 0.2s;
+            }
+
+            #menu-overlay {
+                display: none;
+                position: fixed;
+                top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.6);
+                z-index: 10001;
+            }
+
+            /* --- MOBIL-SPECIFIKKE REGLER (RESPONSIVE) --- */
+            @media (max-width: 768px) {
+                html {
+                    height: 100%;
+                    background: var(--bg);
+                }
+                body {
+                    zoom: 0.75; /* Vi zoomer hele siden for at fange alle popups og notifikationer */
+                    height: 133.3333vh; /* Kompenserer for zoom, så vi undgår dead-space i bunden */
+                    overflow: hidden; /* Forhindrer body i at scrolle */
+                }
+                nav, #hamburger-btn, #quick-audio-controls {
+                    zoom: 1.333333; /* Skalerer UI elementerne op igen, så de holdes i 1.0 størrelse */
+                }
+                #main-content {
+                    margin-left: 0;
+                    padding: 10px;
+                    box-sizing: border-box;
+                    height: 100%;
+                    overflow-y: auto; /* Giver KUN main-content en scrollbar */
+                    -webkit-overflow-scrolling: touch; /* Giver smooth "momentum" scroll på iOS */
+                }
+                nav {
+                    transform: translateX(-105%);
+                    transition: transform 0.3s ease-in-out;
+                    position: fixed;
+                    z-index: 10002;
+                    height: 100%;
+                    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+                    /* Gør menuen scrollable hvis indholdet er for højt til skærmen */
+                    overflow-y: auto;
+                    display: flex; flex-direction: column;
+                }
+                nav.open {
+                    transform: translateX(0);
+                }
+                #hamburger-btn {
+                    display: flex;
+                }
+
+                /* Gør hoved-containere på siderne 100% brede */
+                #page-arena > div, #page-achievements > div, #page-shop > div,
+                .collection-sticky-header, #album-content, .page-content {
+                    max-width: 100% !important; /* !important er nødvendig for at overskrive inline styles */
+                    padding-left: 0; padding-right: 0;
+                }
+
+                /* Gør Arena kamp-vinduet højere på mobil */
+                .battle-field {
+                    min-height: 65vh;
+                }
+
+                /* Arena: Flyt resultat-knapper HELT ned i bunden på mobil */
+            .battle-center-overlay.result-overlay-active {
+                position: fixed !important;
+                top: auto !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                transform: none !important; /* Dette løser buggen! */
+                width: 100% !important;
+                background: rgba(0,0,0,0.95) !important;
+                border-top: 2px solid var(--gold) !important;
+                padding-bottom: 25px !important;
+                z-index: 9999 !important;
+                }
+
+                .result-overlay-active .result-btn-container {
+                    display: flex; 
+                    flex-wrap: wrap;
+                    width: 100%;
+                max-width: 100%;
+                    padding: 15px;
+                    box-sizing: border-box;
+                background: transparent;
+                }
+
+                .result-overlay-active .result-btn {
+                    flex-grow: 1;
+                    flex-basis: 40%; /* Giver et 2x2 grid på de fleste mobiler */
+                }
+
+                /* Fætter BR Shop Popup på mobil */
+                #br-popup-container {
+                    flex-direction: column !important;
+                    align-items: center !important;
+                    right: 0 !important;
+                    left: 0 !important;
+                }
+                #br-popup-bubble {
+                    margin-right: 0 !important;
+                    margin-bottom: 15px !important;
+                    max-width: 85% !important;
+                    font-size: 1.1rem !important;
+                    padding: 15px !important;
+                }
+                #br-popup-tail {
+                    bottom: -16px !important;
+                    right: 50% !important;
+                    margin-right: -13px !important;
+                    transform: rotate(135deg) !important; /* Får halen til at pege nedad */
+                }
+                #br-popup-img {
+                    width: 220px !important;
+                }
             }
         `;
         document.head.appendChild(style);
