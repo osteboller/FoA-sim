@@ -331,7 +331,7 @@ function showBRPopup(queue) {
                 <span id="br-popup-text"></span>
                 <div id="br-popup-tail" style="position:absolute; bottom:30px; right:-14px; width:26px; height:26px; background:#fff; border-top:4px solid #333; border-right:4px solid #333; transform:rotate(45deg); border-radius:4px;"></div>
             </div>
-            <img id="br-popup-img" src="assets/shop/fatter_br_message.gif" style="width:375px; height:auto; object-fit:contain; filter:drop-shadow(0 5px 15px rgba(0,0,0,0.5)); cursor:pointer; pointer-events:auto; z-index:2;" onclick="closeBRPopup()">
+                <img id="br-popup-img" src="assets/shop/fatter_br_message.gif" style="width:375px; height:auto; object-fit:contain; filter:drop-shadow(0 5px 15px rgba(0,0,0,0.5)); cursor:pointer; pointer-events:auto; z-index:2;">
         `;
         document.body.appendChild(container);
     }
@@ -347,12 +347,23 @@ function showBRPopup(queue) {
     tail.style.background = '#fff'; tail.style.borderColor = '#333';
     imgEl.style.filter = 'drop-shadow(0 5px 15px rgba(0,0,0,0.5))';
 
+    // Dynamisk onclick handling, så han kan udlevere gaver
+    const clickHandler = () => {
+        if (popupData.onClick) popupData.onClick();
+        closeBRPopup(queue);
+    };
+    imgEl.onclick = clickHandler;
+    bubble.onclick = clickHandler;
+    bubble.style.cursor = 'pointer';
+
     // Animer ind
     setTimeout(() => {
         if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('ui', 'popup-open');
         container.style.bottom = '20px';
-        state.seenShopPopups.push(popupData.id);
-        save();
+        if (popupData.id && !state.seenShopPopups.includes(popupData.id)) {
+            state.seenShopPopups.push(popupData.id);
+            save();
+        }
 
         // Hvis der er en pakke tilknyttet, så swipe over til den automatisk!
         if (popupData.packId) {
@@ -362,7 +373,11 @@ function showBRPopup(queue) {
             }
         }
 
-        container.brPopupTimeout = setTimeout(() => closeBRPopup(queue), 6000);
+        if (!popupData.requireClick) {
+            container.brPopupTimeout = setTimeout(() => closeBRPopup(queue), popupData.duration || 6000);
+        } else {
+            if (container.brPopupTimeout) clearTimeout(container.brPopupTimeout);
+        }
     }, 100);
 }
 

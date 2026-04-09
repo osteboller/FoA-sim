@@ -976,6 +976,26 @@ function showCloseButton(packType, sceneContainer) {
     btnWrapper.appendChild(okBtn);
     btnWrapper.appendChild(buyAgainBtn);
     (sceneContainer || container).appendChild(btnWrapper);
+
+    // Tjek om Fætter BR skal give et tabt kort!
+    if (window.droppedCardReward) {
+        const cardId = window.droppedCardReward;
+        window.droppedCardReward = null;
+        setTimeout(() => {
+            showBRPopup([{
+                id: 'dropped_card_' + cardId,
+                text: "Hov! Du tabte noget, da du åbnede pakken! Her, værsgo.",
+                requireClick: true,
+                onClick: () => {
+                    const card = cardData.find(c => c.id === cardId);
+                    if (card) {
+                        if (typeof AudioManager !== 'undefined') AudioManager.sfx.play('shop', 'reveal-tier3');
+                        showBigReveal({ ...card, status: 'NEW' });
+                    }
+                }
+            }]);
+        }, 800);
+    }
 }
 
 // Global reveal overlay logic (moved from shop.js)

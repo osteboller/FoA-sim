@@ -294,6 +294,13 @@ function buyPack(type) {
         }
     }
 
+    // Tjek for regionale Exclusive RAMMs (ID: 57, 58, 59) for at give kortet første gang
+    const hasExclusiveRamm = itemsToReveal.some(i => [57, 58, 59].includes(i.id));
+    if (hasExclusiveRamm && !state.ownedCards.includes(153)) {
+        state.ownedCards.push(153);
+        window.droppedCardReward = 153; // Gemmer ID'et til Fætter BR popup'en
+    }
+
     save();
     
     // Call the new interactive opener

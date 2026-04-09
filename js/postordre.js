@@ -98,6 +98,12 @@ function buyElitePack() {
         if(base) items.push(addAlienToInventory(base));
     });
     
+    // Tilføj Special Edition RAMMs kort første gang
+    if (!state.ownedCards.includes(154)) {
+        state.ownedCards.push(154);
+        window.droppedCardReward = 154; // Gemmer ID'et til Fætter BR popup'en
+    }
+
     save();
     document.getElementById('elite-shop-modal')?.remove();
     openPackInteractive(items, 'elite_ramm');
@@ -148,6 +154,13 @@ function buyVaultPack() {
             const randomVault = vaultPool[Math.floor(Math.random() * vaultPool.length)];
             items.push(addAlienToInventory(randomVault, 'gen_1'));
         }
+    }
+
+    // Tjek for US RAMM (ID: 59) for at give kortet første gang
+    const hasUsRamm = items.some(i => i.id === 59);
+    if (hasUsRamm && !state.ownedCards.includes(153)) {
+        state.ownedCards.push(153);
+        window.droppedCardReward = 153;
     }
 
     save();
