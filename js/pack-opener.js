@@ -25,9 +25,17 @@ function tiltPack(e) {
     const img = btn.querySelector('.pack-img');
     if(!img) return;
     
+    // Understøttelse for både mus og touch på mobil
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    }
+
     const rect = btn.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
     
     const cx = rect.width / 2;
     const cy = rect.height / 2;
@@ -61,6 +69,7 @@ async function openPackInteractive(items, packType) {
     container.style.background = ''; // Sikr at der ikke hænger gamle farver (f.eks. rød)
     document.body.style.overflow = 'hidden'; // Lås baggrundens scrollbar fast
     container.innerHTML = "";
+    container.onclick = null; // Nulstil klik, så den ikke lukker mens animationen kører
 
     skipOpenerAnimation = false;
     
@@ -69,7 +78,8 @@ async function openPackInteractive(items, packType) {
     skipOverlay.id = 'skip-opener-overlay';
     skipOverlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; cursor:pointer;';
     skipOverlay.title = "Klik for at springe animationen over";
-    skipOverlay.onclick = () => {
+    skipOverlay.onclick = (e) => {
+        if (e) e.stopPropagation(); // Stop klikket fra at boble videre
         skipPackAnimation();
         skipOverlay.style.pointerEvents = 'none';
     };
@@ -948,7 +958,8 @@ function showCloseButton(packType, sceneContainer) {
     const buyAgainBtn = document.createElement('button');
     buyAgainBtn.innerText = "KØB IGEN";
     buyAgainBtn.className = 'btn-buy-again';
-    buyAgainBtn.onclick = () => {
+    buyAgainBtn.onclick = (e) => {
+        if (e) e.stopPropagation(); // Undgå at klikket bobler op til baggrunden
         const container = document.getElementById('shop-batch');
         if(container) container.innerHTML = "";
         if(typeof setShopBusy === 'function') setShopBusy(false);
@@ -971,11 +982,20 @@ function showCloseButton(packType, sceneContainer) {
     const okBtn = document.createElement('button');
     okBtn.innerText = "AFSLUT";
     okBtn.className = 'btn-close-pack';
-    okBtn.onclick = resetShopState; // Defined in shop.js
+    okBtn.onclick = (e) => {
+        if (e) e.stopPropagation();
+        resetShopState();
+    };
 
     btnWrapper.appendChild(okBtn);
     btnWrapper.appendChild(buyAgainBtn);
     (sceneContainer || container).appendChild(btnWrapper);
+
+    // Tillad at lukke ved at klikke hvorsomhelst i baggrunden
+    // Lagt i en lille forsinkelse, så skip-klikket ikke uforvarende lukker pakken
+    setTimeout(() => {
+        container.onclick = resetShopState;
+    }, 100);
 
     // Tjek om Fætter BR skal give et tabt kort!
     if (window.droppedCardReward) {
@@ -1024,6 +1044,7 @@ function showBigReveal(item) {
     const imgFilter = base && base.cssFilter ? base.cssFilter : 'none';
     const overlay = document.getElementById('revealOverlay');
     overlay.style.display = 'flex';
+    overlay.onclick = closeReveal; // Gør det muligt at lukke ved klik på baggrunden
     
     // Populate Data
     setTimeout(() => document.getElementById('bigCard').classList.add('show'), 10);

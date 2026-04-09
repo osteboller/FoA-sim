@@ -142,6 +142,27 @@ function initShop() {
     const eliteHtml = (typeof renderEliteClub === 'function') ? renderEliteClub() : '';
     document.getElementById('elite-container').innerHTML = eliteHtml;
 
+    // Tilføj swipe-funktionalitet til karrusellen på mobil
+    const carouselWrapper = document.querySelector('.shop-carousel-wrapper');
+    if (carouselWrapper) {
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        carouselWrapper.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        carouselWrapper.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            const threshold = 50; // Minimum antal pixels der skal swipes
+            if (touchEndX < touchStartX - threshold) {
+                navigateShop(1); // Swipe mod venstre -> Næste pakke
+            } else if (touchEndX > touchStartX + threshold) {
+                navigateShop(-1); // Swipe mod højre -> Forrige pakke
+            }
+        }, { passive: true });
+    }
+
     // Tjek om Fætter BR har noget at sige!
     setTimeout(checkShopPopups, 800);
 }
@@ -160,7 +181,7 @@ function createPackElement(index) {
         <h3 class="pack-title">${isLocked ? '?????' : pack.name}</h3>
         <div class="pack-desc">${isLocked ? pack.reqText : pack.desc}</div>
         
-        <div class="pack-display" onclick="${isLocked ? '' : `buyPack('${pack.id}')`}" ${!isLocked ? `onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)"` : ''} style="position:relative; cursor: ${isLocked ? 'default' : 'pointer'};">
+        <div class="pack-display" onclick="${isLocked ? '' : `buyPack('${pack.id}')`}" ${!isLocked ? `onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" ontouchstart="tiltPack(event)" ontouchmove="tiltPack(event)" ontouchend="resetTilt(event)" ontouchcancel="resetTilt(event)"` : ''} style="position:relative; cursor: ${isLocked ? 'default' : 'pointer'};">
             <div class="pack-price-tag ${isLocked ? 'locked' : ''}" style="${pack.tagStyle || ''}">
                 ${isLocked ? '<div style="font-size:2rem">🔒</div>' : `<div>${pack.cost}</div><span>KR.</span>`}
             </div>
@@ -220,6 +241,7 @@ function resetShopState() {
     shopIsBusy = false;
     const container = document.getElementById('shop-batch');
     if (container) {
+        container.onclick = null; // Nulstil klik-hændelsen for baggrunden
         container.innerHTML = "";
         container.className = 'shop-batch-grid'; // Nulstil til standard grid layout
         container.style.display = 'none'; // Sørg for at den skjules igen
