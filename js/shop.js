@@ -146,20 +146,43 @@ function initShop() {
     const carouselWrapper = document.querySelector('.shop-carousel-wrapper');
     if (carouselWrapper) {
         let touchStartX = 0;
-        let touchEndX = 0;
+        let touchStartY = 0;
+        let isSwipingHorizontal = null; // null = ukendt, true = horisontalt swipe, false = vertikalt scroll
 
         carouselWrapper.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            isSwipingHorizontal = null;
         }, { passive: true });
 
-        carouselWrapper.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            const threshold = 50; // Minimum antal pixels der skal swipes
-            if (touchEndX < touchStartX - threshold) {
-                navigateShop(1); // Swipe mod venstre -> Næste pakke
-            } else if (touchEndX > touchStartX + threshold) {
-                navigateShop(-1); // Swipe mod højre -> Forrige pakke
+        carouselWrapper.addEventListener('touchmove', e => {
+            if (isSwipingHorizontal === false) return; // Lad browseren scrolle vertikalt
+
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            const diffX = Math.abs(currentX - touchStartX);
+            const diffY = Math.abs(currentY - touchStartY);
+
+            if (isSwipingHorizontal === null && (diffX > 5 || diffY > 5)) {
+                isSwipingHorizontal = diffX > diffY;
             }
+
+            if (isSwipingHorizontal) {
+                e.preventDefault(); // Forhindrer at skærmen scroller op/ned
+            }
+        }, { passive: false });
+
+        carouselWrapper.addEventListener('touchend', e => {
+            if (isSwipingHorizontal !== false) {
+                const touchEndX = e.changedTouches[0].clientX;
+                const threshold = 50; // Minimum antal pixels der skal swipes
+                if (touchEndX < touchStartX - threshold) {
+                    navigateShop(1); // Swipe mod venstre -> Næste pakke
+                } else if (touchEndX > touchStartX + threshold) {
+                    navigateShop(-1); // Swipe mod højre -> Forrige pakke
+                }
+            }
+            isSwipingHorizontal = null;
         }, { passive: true });
     }
 
