@@ -269,6 +269,12 @@ function navCollectionTab(tab) {
         switchCollectionTab(tab);
     }
     updateCollectionSubmenuUI();
+    
+    // Luk sidemenuen på mobil, når der navigeres
+    const nav = document.querySelector('nav');
+    if (nav && nav.classList.contains('open')) {
+        toggleNav();
+    }
 }
 
 // Opdaterer farver og borders i undermenuen, så det matcher det valgte faneblad
@@ -292,6 +298,12 @@ function navWorkTab(tab) {
         switchWorkTab(tab);
     }
     updateWorkSubmenuUI();
+    
+    // Luk sidemenuen på mobil, når der navigeres
+    const nav = document.querySelector('nav');
+    if (nav && nav.classList.contains('open')) {
+        toggleNav();
+    }
 }
 
 // Opdaterer farver og borders i undermenuen for Work
@@ -316,6 +328,12 @@ function navAchievementTab(tab) {
         renderAchievements();
     }
     updateAchievementSubmenuUI();
+    
+    // Luk sidemenuen på mobil, når der navigeres
+    const nav = document.querySelector('nav');
+    if (nav && nav.classList.contains('open')) {
+        toggleNav();
+    }
 }
 
 // Opdaterer farver og borders i undermenuen for Trofæer
@@ -646,6 +664,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabFiguresBtn = document.getElementById('tab-figures');
     if (collectionPage && tabFiguresBtn && !collectionPage.querySelector('#sticky-collection-header')) {
         const h2 = collectionPage.querySelector('h2');
+        
+        // Opgrader Collection H2 til det nye Top Panel automatisk
+        if (h2 && !h2.classList.contains('top-panel-header')) {
+            h2.className = 'top-panel-header';
+            h2.style.borderTop = '2px solid var(--gold)';
+            h2.style.borderBottom = '2px solid var(--gold)';
+            h2.innerHTML = `<span style="color:var(--gold);">SAMLING</span>`;
+        }
+
         const tabsContainer = tabFiguresBtn.parentElement;
         const controlsContainer = document.getElementById('collection-controls');
 
@@ -738,6 +765,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 z-index: 10001;
             }
 
+            /* Fælles Top-Panel for alle sider */
+            .top-panel-header {
+                min-height: 70px;
+                background: linear-gradient(90deg, #111 0%, #222 50%, #111 100%);
+                border-radius: 15px;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.3rem;
+                font-weight: bold;
+                color: #fff;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.5);
+                text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+                width: 100%;
+                box-sizing: border-box;
+            }
+
             /* --- MOBIL-SPECIFIKKE REGLER (RESPONSIVE) --- */
             @media (max-width: 768px) {
                 html {
@@ -755,7 +802,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 #main-content {
                     margin-left: 0;
                     padding: 10px;
-                    padding-bottom: 150px; /* Ekstra luft i bunden så man kan scrolle forbi mobilens menulinje */
+                    padding-bottom: 150px; /* Ekstra luft i bunden så man kan scrolle forbi mobilens menulinje (Safari fix) */
                     box-sizing: border-box;
                     height: 100%;
                     overflow-y: auto; /* Giver KUN main-content en scrollbar */

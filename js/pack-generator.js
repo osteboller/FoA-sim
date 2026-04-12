@@ -21,7 +21,7 @@ function buyPack(type) {
     let itemsToReveal = [];
     
     const currentLevel = state.maxLevel || 1;
-    const gen2Unlocked = currentLevel >= 11;
+    const gen2Unlocked = currentLevel >= 16;
     const activeRelease = gen2Unlocked ? 'gen_2' : 'gen_1';
     
     // Filter pools: Exclude all exclusives from normal packs

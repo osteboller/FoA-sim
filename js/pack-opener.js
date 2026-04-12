@@ -25,31 +25,50 @@ function tiltPack(e) {
     const img = btn.querySelector('.pack-img');
     if(!img) return;
     
-    // Understøttelse for både mus og touch på mobil
+    if (!btn.classList.contains('is-tilted')) {
+        btn.classList.add('is-tilted'); // Aktiverer CSS hover-effekter på touch
+        img.style.transition = 'none'; // Fjerner CSS-transition midlertidigt for at fjerne lag
+    }
+    
     let clientX = e.clientX;
     let clientY = e.clientY;
+    
+    // Hent touch koordinater, hvis det er en mobil
     if (e.touches && e.touches.length > 0) {
         clientX = e.touches[0].clientX;
         clientY = e.touches[0].clientY;
+    } else if (e.type && e.type.includes('touch')) {
+        return; // Undgå fejl, hvis der mangler data (f.eks. ved touchcancel)
     }
 
-    const rect = btn.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
+    if (btn.tiltFrame) cancelAnimationFrame(btn.tiltFrame);
     
-    const cx = rect.width / 2;
-    const cy = rect.height / 2;
-    
-    const rotX = -((y - cy) / cy) * 15; 
-    const rotY = ((x - cx) / cx) * 15;
-    
-    const baseScale = parseFloat(img.dataset.scale || 1);
-    img.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${baseScale * 1.05})`;
+    // Batch DOM-opdateringen for at sikre en silkeblød framerate på mobil
+    btn.tiltFrame = requestAnimationFrame(() => {
+        const rect = btn.getBoundingClientRect();
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+        
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+        
+        const rotX = -((y - cy) / cy) * 15; 
+        const rotY = ((x - cx) / cx) * 15;
+        
+        const baseScale = parseFloat(img.dataset.scale || 1);
+        img.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${baseScale * 1.05})`;
+    });
 }
 
 function resetTilt(e) {
-    const img = e.currentTarget.querySelector('.pack-img');
+    const btn = e.currentTarget;
+    btn.classList.remove('is-tilted');
+    const img = btn.querySelector('.pack-img');
+    
+    if (btn.tiltFrame) cancelAnimationFrame(btn.tiltFrame);
+    
     if(img) {
+        img.style.transition = ''; // Gendan CSS transition, så den falder blødt på plads
         const baseScale = parseFloat(img.dataset.scale || 1);
         img.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(${baseScale})`;
     }
@@ -1001,10 +1020,16 @@ function showCloseButton(packType, sceneContainer) {
     if (window.droppedCardReward) {
         const cardId = window.droppedCardReward;
         window.droppedCardReward = null;
+        
+        let brText = "Hov! Du tabte noget, da du åbnede pakken! Her, værsgo.";
+        if (cardId === 165) {
+            brText = "Hov, vent! Du var lige ved at glemme det her også!";
+        }
+
         setTimeout(() => {
             showBRPopup([{
                 id: 'dropped_card_' + cardId,
-                text: "Hov! Du tabte noget, da du åbnede pakken! Her, værsgo.",
+                text: brText,
                 requireClick: true,
                 onClick: () => {
                     const card = cardData.find(c => c.id === cardId);
@@ -1138,9 +1163,11 @@ function announceDrop(item, duration = 2000, packType = null) {
     if (group === 'E-ramm') {
         text = "MYTHIC DROP!<br>JANGUTZ KHAN";
         style = "background: linear-gradient(90deg, var(--red), var(--blue), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(255,255,255,0.2); font-size: 3.5rem;";
+        style = "background: linear-gradient(90deg, var(--red), var(--blue), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(255,255,255,0.2);";
     } else if (group === 'Sciroids') {
         text = "LEGENDARY DROP!<br>SCIROID";
         style = "background: linear-gradient(135deg, #fff 0%, #aaa 50%, #fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255,255,255,0.6); font-size: 3.5rem;";
+        style = "background: linear-gradient(135deg, #fff 0%, #aaa 50%, #fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255,255,255,0.6);";
     } else if (group === 'Secret' || item.release === 'secret') {
         text = "SECRET ERROR PRINT<br>MUTANT!";
         let gColor = '#ff00ff';
@@ -1164,9 +1191,11 @@ function announceDrop(item, duration = 2000, packType = null) {
         if (packType === 'war' || packType === 'battle') return;
         text = "EPIC WEAPON!";
         style = "color: var(--gold); text-shadow: 0 0 10px var(--gold); font-size: 3rem;";
+        style = "color: var(--gold); text-shadow: 0 0 10px var(--gold);";
     } else if (group === 'Crystalites' || group === 'Shadows') {
         text = "POWER PLAYER!";
         style = "color: #00ffff; text-shadow: 0 0 15px #00ffff; font-size: 3rem;";
+        style = "color: #00ffff; text-shadow: 0 0 15px #00ffff;";
     } else {
         return;
     }

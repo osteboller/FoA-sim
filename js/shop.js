@@ -97,8 +97,8 @@ const shopPacks = [
         img: 'assets/shop/sciroid_battleship_box.gif',
         color: '#00ff00',
         special: true,
-        reqLevel: 11,
-        reqText: 'Låses op hos Rivalerne (Niveau 11)',
+        reqLevel: 16,
+        reqText: 'Låses op hos Rivalerne (Niveau 16)',
         scale: 1.8,
         tagStyle: 'right: -20%;'
     }
@@ -352,6 +352,23 @@ function checkShopPopups() {
             }
         }
     });
+
+    // 3. Første Våben fundet
+    if (state.ownedWeapons && state.ownedWeapons.length > 0) {
+        if (!state.seenShopPopups.includes('first_weapon')) {
+            popupsQueue.push({ id: 'first_weapon', text: "Sådan min ven! Du har fundet dine første våben. Tag dem med dig i Arenaen og læs det opdaterede afsnit i Regler om våben." });
+        }
+    }
+
+    // 4. Generation 2 & The Vault (Niveau 16)
+    if (currentLevel >= 16) {
+        if (!state.seenShopPopups.includes('gen2_unlocked')) {
+            popupsQueue.push({ id: 'gen2_unlocked', text: "Der er kommet nye figurer i pakkerne, men også nogle der er udgået..." });
+        }
+        if (!state.seenShopPopups.includes('vault_unlocked')) {
+            popupsQueue.push({ id: 'vault_unlocked', text: "Oppe i Elite Collector Club kan du nu købe 'The Vault'. Her kan du være heldig at finde Generation 1 figurer, der ellers er udgået!" });
+        }
+    }
 
     if (popupsQueue.length > 0) {
         showBRPopup(popupsQueue);
