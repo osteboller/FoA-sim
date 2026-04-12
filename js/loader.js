@@ -1,4 +1,5 @@
 let isGameLoaded = false;
+window.foaCachedImages = []; // Global cache der forhindrer garbage collection på mobil
 
 function initHomePage() {
     let page = document.getElementById('page-home');
@@ -43,16 +44,18 @@ function initHomePage() {
 function preloadAssets() {
     const assets = new Set();
     const staticAssets = [
-        "assets/bgg/foassa.gif", "assets/bgg/logo_foa_sim.gif", "assets/shop/fatter_br.gif",
+        "assets/bgg/background.gif", "assets/bgg/foassa.gif", "assets/bgg/logo_foa_sim.gif", "assets/shop/fatter_br.gif",
         "assets/shop/fatter_br_evil.gif", "assets/shop/fatter_br_message.gif", "assets/shop/mystery_box.gif", "assets/shop/mystery_box_open.gif",
         "assets/shop/blister_closed.gif", "assets/shop/blister_open.gif", "assets/shop/battle_pack.gif",
         "assets/shop/space_pod_pack.gif", "assets/shop/war_pack.gif", "assets/shop/sciroid_battleship_box.gif",
         "assets/sciroid_battleship/sciroid_battleship_pod_closed.gif", "assets/sciroid_battleship/sciroid_battleship_pod_open.gif",
-        "assets/shop/special_edition_ramm_set.gif", "assets/shop/jangutz_pack.gif", "assets/img/3aliens.gif",
+        "assets/shop/special_edition_ramm_set.gif", "assets/shop/special_edition_ramm_set_open.gif", 
+        "assets/shop/jangutz_pack.gif", "assets/shop/jangutz_pack_open.gif", "assets/img/3aliens.gif",
         "assets/shop/blister_pack_it.gif", "assets/shop/blister_open_it.gif",
         "assets/shop/blister_pack_jp.gif", "assets/shop/blister_open_jp.gif",
         "assets/shop/blister_pack_us.gif", "assets/shop/blister_open_us.gif",
-        "assets/shop/foa_poster.gif", "assets/jangutz_khan/poster.gif", "assets/shop/t-shirt.gif"
+        "assets/shop/foa_poster.gif", "assets/jangutz_khan/poster.gif", "assets/shop/t-shirt.gif",
+        "assets/pods/red_pod.gif", "assets/pods/green_pod.gif", "assets/pods/blue_pod.gif"
     ];
     staticAssets.forEach(src => assets.add(src));
     if (typeof workGifs !== 'undefined') workGifs.forEach(gif => assets.add(gif));
@@ -123,6 +126,7 @@ function preloadAssets() {
             const img = new Image();
             img.onload = img.onerror = updateProgress;
             img.src = asset.src;
+            window.foaCachedImages.push(img); // Låser billedet i RAM, så det loader øjeblikkeligt
         } else {
             fetch(asset.src).then(updateProgress).catch(updateProgress);
         }

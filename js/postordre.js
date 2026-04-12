@@ -30,9 +30,9 @@ function renderEliteClub() {
 
 function openEliteShopModal() {
     const currentLevel = state.maxLevel || 1;
-    const vaultUnlocked = currentLevel >= 16;
-    const rammUnlocked = currentLevel >= 21;
-    const jangutzUnlocked = currentLevel >= 26;
+    const vaultUnlocked = currentLevel >= 21;
+    const rammUnlocked = currentLevel >= 26;
+    const jangutzUnlocked = currentLevel >= 31;
 
     const modal = document.createElement('div');
     modal.id = 'elite-shop-modal';
@@ -59,26 +59,26 @@ function openEliteShopModal() {
                 <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Eksklusiv medlems T-shirt</div>
                 <div style="color:var(--blue); font-weight:bold; margin-top:5px; font-size:1.1rem;">8 Jangutz Points</div>
             </button>
-            <button class="shop-btn" ${vaultUnlocked ? 'onclick="buyVaultPack()" onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" ontouchstart="tiltPack(event)" ontouchmove="tiltPack(event)" ontouchend="resetTilt(event)" ontouchcancel="resetTilt(event)"' : 'onclick="showAlert(\'Låses op hos Rivalerne (Niveau 16)\', \'LÅST\')"' } style="background:radial-gradient(circle, #001122 0%, #000011 100%); border:2px solid ${vaultUnlocked ? 'var(--blue)' : '#444'}; color:#fff; padding:20px; border-radius:15px; cursor:pointer; width:300px; transition:0.2s; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 0 30px rgba(0, 85, 255, 0.2); ${vaultUnlocked ? '' : 'filter:grayscale(1) brightness(0.6);'}">
+            <button class="shop-btn" ${vaultUnlocked ? 'onclick="buyVaultPack()" onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" ontouchstart="tiltPack(event)" ontouchmove="tiltPack(event)" ontouchend="resetTilt(event)" ontouchcancel="resetTilt(event)"' : 'onclick="showAlert(\'Låses op i Italien (Niveau 21)\', \'LÅST\')"' } style="background:radial-gradient(circle, #001122 0%, #000011 100%); border:2px solid ${vaultUnlocked ? 'var(--blue)' : '#444'}; color:#fff; padding:20px; border-radius:15px; cursor:pointer; width:300px; transition:0.2s; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 0 30px rgba(0, 85, 255, 0.2); ${vaultUnlocked ? '' : 'filter:grayscale(1) brightness(0.6);'}">
                 <img class="pack-img" src="assets/shop/blister_pack_us.gif" data-scale="1.2" style="width:100%; height:250px; object-fit:contain; margin-bottom:10px; image-rendering:pixelated; transition: transform 0.1s ease-out; transform: scale(1.2);">
                 <div style="font-weight:bold; margin:5px 0; font-size:1.2rem; color:${vaultUnlocked ? 'var(--blue)' : '#fff'};">THE VAULT</div>
-                <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">${vaultUnlocked ? '2 Udgåede Aliens (Chance for US RAMM!)' : 'Låses op ved Niveau 16'}</div>
+                <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">${vaultUnlocked ? '2 Udgåede Aliens (Chance for US RAMM!)' : 'Låses op ved Niveau 21'}</div>
                 <div style="color:var(--gold); font-weight:bold; margin-top:5px; font-size:1.1rem;">${vaultUnlocked ? '5 Jangutz Points' : '🔒 LÅST'}</div>
             </button>
-            <button class="shop-btn" ${rammUnlocked ? 'onclick="buyElitePack()" onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" ontouchstart="tiltPack(event)" ontouchmove="tiltPack(event)" ontouchend="resetTilt(event)" ontouchcancel="resetTilt(event)"' : 'onclick="showAlert(\'Låses op i Italien (Niveau 21)\', \'LÅST\')"' } style="background:radial-gradient(circle, #4a3800 0%, #1a1400 100%); border:2px solid ${rammUnlocked ? 'var(--gold)' : '#444'}; color:#fff; padding:20px; border-radius:15px; cursor:pointer; width:300px; transition:0.2s; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); ${rammUnlocked ? '' : 'filter:grayscale(1) brightness(0.6);'}">
+            <button class="shop-btn" ${rammUnlocked ? 'onclick="buyElitePack()" onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" ontouchstart="tiltPack(event)" ontouchmove="tiltPack(event)" ontouchend="resetTilt(event)" ontouchcancel="resetTilt(event)"' : 'onclick="showAlert(\'Låses op under DK Mesterskabet (Niveau 26)\', \'LÅST\')"' } style="background:radial-gradient(circle, #4a3800 0%, #1a1400 100%); border:2px solid ${rammUnlocked ? 'var(--gold)' : '#444'}; color:#fff; padding:20px; border-radius:15px; cursor:pointer; width:300px; transition:0.2s; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); ${rammUnlocked ? '' : 'filter:grayscale(1) brightness(0.6);'}">
                 <img class="pack-img" src="assets/shop/special_edition_ramm_set.gif" style="width:100%; height:250px; object-fit:contain; margin-bottom:10px; image-rendering:pixelated; transition: transform 0.1s ease-out;">
                 <div style="font-weight:bold; margin:5px 0; font-size:1.2rem;">MEGA RARE PAKKE</div>
-                <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">${rammUnlocked ? 'Garanteret Rammerface, Rammstash & Rammworm' : 'Låses op ved Niveau 21'}</div>
+                <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">${rammUnlocked ? 'Garanteret Rammerface, Rammstash & Rammworm' : 'Låses op ved Niveau 26'}</div>
                 <div style="color:var(--blue); font-weight:bold; margin-top:5px; font-size:1.1rem;">${rammUnlocked ? '10 Jangutz Points' : '🔒 LÅST'}</div>
             </button>
-            <button class="shop-btn" ${jangutzUnlocked ? 'onclick="buyJangutzPack()" onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" ontouchstart="tiltPack(event)" ontouchmove="tiltPack(event)" ontouchend="resetTilt(event)" ontouchcancel="resetTilt(event)"' : 'onclick="showAlert(\'Låses op under DK Mesterskabet (Niveau 26)\', \'LÅST\')"' } style="background:radial-gradient(circle, #220000 0%, #110000 100%); border:2px solid ${jangutzUnlocked ? 'var(--red)' : '#444'}; color:#fff; padding:20px; border-radius:15px; cursor:pointer; width:300px; transition:0.2s; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 0 30px rgba(255, 0, 0, 0.2); ${jangutzUnlocked ? '' : 'filter:grayscale(1) brightness(0.6);'}">
+            <button class="shop-btn" ${jangutzUnlocked ? 'onclick="buyJangutzPack()" onmousemove="tiltPack(event)" onmouseleave="resetTilt(event)" ontouchstart="tiltPack(event)" ontouchmove="tiltPack(event)" ontouchend="resetTilt(event)" ontouchcancel="resetTilt(event)"' : 'onclick="showAlert(\'Låses op i Japan (Niveau 31)\', \'LÅST\')"' } style="background:radial-gradient(circle, #220000 0%, #110000 100%); border:2px solid ${jangutzUnlocked ? 'var(--red)' : '#444'}; color:#fff; padding:20px; border-radius:15px; cursor:pointer; width:300px; transition:0.2s; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 0 30px rgba(255, 0, 0, 0.2); ${jangutzUnlocked ? '' : 'filter:grayscale(1) brightness(0.6);'}">
                 <img class="pack-img" src="assets/shop/jangutz_pack.gif" style="width:100%; height:250px; object-fit:contain; margin-bottom:10px; image-rendering:pixelated; transition: transform 0.1s ease-out;">
                 <div style="font-weight:bold; margin:5px 0; font-size:1.2rem; color:${jangutzUnlocked ? 'var(--red)' : '#fff'};">JANGUTZ KHAN PAKKE</div>
-                <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">${jangutzUnlocked ? 'Indeholder den legendariske Jangutz Khan' : 'Låses op ved Niveau 26'}</div>
+                <div style="font-size:0.9rem; color:#aaa; margin-top:5px;">${jangutzUnlocked ? 'Indeholder den legendariske Jangutz Khan' : 'Låses op ved Niveau 31'}</div>
                 <div style="color:var(--blue); font-weight:bold; margin-top:5px; font-size:1.1rem;">${jangutzUnlocked ? '16 Jangutz Points' : '🔒 LÅST'}</div>
             </button>
         </div>
-        <button onclick="document.getElementById('elite-shop-modal').remove()" style="margin-top: 30px; padding: 10px 30px; background: #333; color: #fff; border: 1px solid #555; border-radius: 50px; cursor: pointer;">Tilbage til Butikken</button>
+        <button onclick="document.getElementById('elite-shop-modal').remove()" style="margin-top: 30px; padding: 15px 50px; background: var(--blue); color: #fff; border: 2px solid #fff; border-radius: 50px; cursor: pointer; font-size: 1.2rem; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Tilbage til Butikken</button>
     `;
 
     modal.innerHTML = content;

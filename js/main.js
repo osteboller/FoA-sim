@@ -229,7 +229,15 @@ function showPage(p) {
     if(detailModal) detailModal.style.display = 'none';
     const revealOverlay = document.getElementById('revealOverlay');
     if(revealOverlay) revealOverlay.style.display = 'none';
+    const eliteModal = document.getElementById('elite-shop-modal');
+    if(eliteModal) eliteModal.remove();
     
+    // Skjul quick-lyd knapperne, når man forlader startskærmen
+    if (p !== 'home') {
+        const qac = document.getElementById('quick-audio-controls');
+        if (qac) qac.style.display = 'none';
+    }
+
     if (p === 'collection') {
         if (typeof switchCollectionTab === 'function') switchCollectionTab('figures');
         updateCollectionSubmenuUI();
@@ -453,6 +461,8 @@ function createFigureElement(item, owned, status = null, count = 0) {
     const group = base ? base.group : (item.group || '');
     let type = item.type || (base ? base.type : 'none');
     
+    container.dataset.group = group; // Tillader specifik CSS styling pr. gruppe (f.eks. våben)
+
     let baseClass = 'base-none';
     
     if (!owned) {
@@ -631,7 +641,9 @@ function updateUI() {
 // Init
 document.addEventListener('DOMContentLoaded', () => {
     // Registrer brugerens første klik, så musikken får lov at spille uden fejl
-    document.addEventListener('click', () => hasInteracted = true, { once: true });
+    document.addEventListener('click', () => {
+        hasInteracted = true;
+    }, { once: true });
 
     if(typeof renderShopButtons === 'function') renderShopButtons();
     
@@ -658,6 +670,16 @@ document.addEventListener('DOMContentLoaded', () => {
         badge.className = 'nav-badge';
         achBtn.appendChild(badge);
     }
+
+    // Sørg for at Lydindstillinger-knappen lukker menuen på mobil
+    document.querySelectorAll('nav button').forEach(btn => {
+        if (btn.innerText.toLowerCase().includes('lyd') || btn.innerText.toLowerCase().includes('audio')) {
+            btn.addEventListener('click', () => {
+                const nav = document.querySelector('nav');
+                if (nav && nav.classList.contains('open')) toggleNav();
+            });
+        }
+    });
 
     // Gør Collection header sticky
     const collectionPage = document.getElementById('page-collection');
@@ -826,45 +848,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     display: flex;
                 }
 
-                /* Gør hoved-containere på siderne 100% brede */
-                #page-arena > div, #page-achievements > div, #page-shop > div,
+            /* Gør hoved-containere på siderne 100% brede */
+            #page-arena > div, #page-achievements > div, #page-shop > div,
                 .collection-sticky-header, #album-content, .page-content {
                     max-width: 100% !important; /* !important er nødvendig for at overskrive inline styles */
-                    padding-left: 0; padding-right: 0;
                 }
 
                 /* Gør Arena kamp-vinduet højere på mobil */
                 .battle-field {
                     min-height: 65vh;
-                }
-
-                /* Arena: Flyt resultat-knapper HELT ned i bunden på mobil */
-            .battle-center-overlay.result-overlay-active {
-                position: fixed !important;
-                top: auto !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                transform: none !important; /* Dette løser buggen! */
-                width: 100% !important;
-                background: rgba(0,0,0,0.95) !important;
-                border-top: 2px solid var(--gold) !important;
-                padding-bottom: 25px !important;
-                z-index: 9999 !important;
-                }
-
-                .result-overlay-active .result-btn-container {
-                    display: flex; 
-                    flex-wrap: wrap;
-                    width: 100%;
-                max-width: 100%;
-                    padding: 15px;
-                    box-sizing: border-box;
-                background: transparent;
-                }
-
-                .result-overlay-active .result-btn {
-                    flex-grow: 1;
-                    flex-basis: 40%; /* Giver et 2x2 grid på de fleste mobiler */
                 }
 
                 /* Fætter BR Shop Popup på mobil */

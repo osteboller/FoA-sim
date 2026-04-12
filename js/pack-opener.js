@@ -30,30 +30,49 @@ function tiltPack(e) {
         img.style.transition = 'none'; // Fjerner CSS-transition midlertidigt for at fjerne lag
     }
     
-    let clientX = e.clientX;
-    let clientY = e.clientY;
+    let clientX, clientY;
+    let isTouch = false;
     
     // Hent touch koordinater, hvis det er en mobil
     if (e.touches && e.touches.length > 0) {
         clientX = e.touches[0].clientX;
         clientY = e.touches[0].clientY;
+        isTouch = true;
+        
+        // Gem boksens start-position for at undgå "søsyge" reflows, når man scroller skærmen
+        if (e.type === 'touchstart') {
+            const rect = btn.getBoundingClientRect();
+            btn.dataset.cx = rect.left + rect.width / 2;
+            btn.dataset.cy = rect.top + rect.height / 2;
+            btn.dataset.w = rect.width / 2;
+            btn.dataset.h = rect.height / 2;
+        }
     } else if (e.type && e.type.includes('touch')) {
         return; // Undgå fejl, hvis der mangler data (f.eks. ved touchcancel)
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
     }
 
     if (btn.tiltFrame) cancelAnimationFrame(btn.tiltFrame);
     
     // Batch DOM-opdateringen for at sikre en silkeblød framerate på mobil
     btn.tiltFrame = requestAnimationFrame(() => {
-        const rect = btn.getBoundingClientRect();
-        const x = clientX - rect.left;
-        const y = clientY - rect.top;
+        let rotX, rotY;
         
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-        
-        const rotX = -((y - cy) / cy) * 15; 
-        const rotY = ((x - cx) / cx) * 15;
+        if (isTouch && btn.dataset.cx) {
+            // Mobil: Brug gemte koordinater for at undgå at tiltet hakker under scrolling
+            rotX = -((clientY - parseFloat(btn.dataset.cy)) / parseFloat(btn.dataset.h)) * 15;
+            rotY = ((clientX - parseFloat(btn.dataset.cx)) / parseFloat(btn.dataset.w)) * 15;
+            // Sæt et max tilt på 20 grader så den ikke spinner helt rundt ved lange scrolls
+            rotX = Math.max(-20, Math.min(20, rotX));
+            rotY = Math.max(-20, Math.min(20, rotY));
+        } else {
+            // Mus/PC: Beregn live da musen ikke scroller hele siden automatisk
+            const rect = btn.getBoundingClientRect();
+            rotX = -((clientY - rect.top - rect.height / 2) / (rect.height / 2)) * 15; 
+            rotY = ((clientX - rect.left - rect.width / 2) / (rect.width / 2)) * 15;
+        }
         
         const baseScale = parseFloat(img.dataset.scale || 1);
         img.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${baseScale * 1.05})`;
@@ -640,6 +659,10 @@ async function openPackInteractive(items, packType) {
     const standardRow = document.createElement('div');
     standardRow.className = 'opener-standard-row';
 
+    // Opret en ny tredje række til våben og kort for at give bedre plads på mobil
+    const minorRow = document.createElement('div');
+    minorRow.className = 'opener-minor-row';
+
     // Helper function til at generere kortene
     const processItem = (item, containerRow, isLarge) => {
         const isNew = item.status === 'NEW';
@@ -748,14 +771,15 @@ async function openPackInteractive(items, packType) {
     }
     
     // 2.5 RENDERING AF MINORS (Side items på vingerne)
-    // Våben til venstre, Kort til højre (PPs også til venstre)
     minors.forEach((item) => {
         const isCard = (typeof cardData !== 'undefined' && cardData.some(c => c.id === item.id));
         const group = item.group;
         
-        if (isCard) processItem(item, rightWing, false);
-        else if (group === 'Weapons' || group === 'Crystalites' || group === 'Shadows') processItem(item, leftWing, false);
-        else processItem(item, rightWing, false);
+        if (group === 'Crystalites' || group === 'Shadows') {
+            processItem(item, centerStage, false); // Power Players bliver i midten
+        } else {
+            processItem(item, minorRow, false); // Våben og Kort flyttes til den nye nederste række
+        }
     });
 
     // 3. RENDERING AF STANDARDS (Nederste række - Normal størrelse)
@@ -764,11 +788,14 @@ async function openPackInteractive(items, packType) {
     }
 
     // Tilføj rækkerne til containeren (hvis de har indhold)
-    if (majors.length > 0 || minors.length > 0) {
+    if (centerStage.hasChildNodes()) {
         if (majors.length > 0) topRow.style.marginBottom = "8cqh"; // Skubber nederste række ned, så de ikke overlapper
         scene.appendChild(topRow);
     }
     if (standards.length > 0) scene.appendChild(standardRow);
+    if (minorRow.hasChildNodes()) {
+        scene.appendChild(minorRow);
+    }
 
     // 3. AUTOMATISK REVEAL SEKVENS (Sorteret så specials kommer sidst)
     const revealSequence = [
@@ -1039,6 +1066,10 @@ function showCloseButton(packType, sceneContainer) {
                     }
                 }
             }]);
+        }, 800);
+    } else {
+        setTimeout(() => {
+            if (typeof checkShopPopups === 'function') checkShopPopups();
         }, 800);
     }
 }

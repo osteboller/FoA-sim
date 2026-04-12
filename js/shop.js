@@ -79,7 +79,7 @@ const shopPacks = [
     {
         id: 'war',
         name: 'WAR PACK',
-        desc: '7 Aliens + 2 Mutanter + 1 PP + 2 Våben',
+        desc: '4 Aliens + 2 Mutanter + 1 PP + 2 Våben',
         cost: 150,
         currency: 'Kr.',
         img: 'assets/shop/war_pack.gif',
@@ -279,6 +279,9 @@ function resetShopState() {
     
     // Refresh UI to show updated currency
     updateUI();
+
+    // Tjek om Fætter BR har noget at sige, når man vender tilbage til butikken
+    setTimeout(checkShopPopups, 500);
 }
 
 
@@ -360,11 +363,15 @@ function checkShopPopups() {
         }
     }
 
-    // 4. Generation 2 & The Vault (Niveau 16)
+    // 4. Generation 2 (Niveau 16)
     if (currentLevel >= 16) {
         if (!state.seenShopPopups.includes('gen2_unlocked')) {
             popupsQueue.push({ id: 'gen2_unlocked', text: "Der er kommet nye figurer i pakkerne, men også nogle der er udgået..." });
         }
+    }
+
+    // 5. The Vault (Niveau 21)
+    if (currentLevel >= 21) {
         if (!state.seenShopPopups.includes('vault_unlocked')) {
             popupsQueue.push({ id: 'vault_unlocked', text: "Oppe i Elite Collector Club kan du nu købe 'The Vault'. Her kan du være heldig at finde Generation 1 figurer, der ellers er udgået!" });
         }

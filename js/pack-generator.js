@@ -158,8 +158,8 @@ function buyPack(type) {
         });
 
     } else if (type === 'war') {
-        // 7 Aliens, 2 Mutants, 1 PP, 2 Weapons, 2 Cards
-        for(let i=0; i<7; i++) itemsToReveal.push(addAlienToInventory(getRandomStandard(), activeRelease));
+        // 4 Aliens, 2 Mutants, 1 PP, 2 Weapons, 2 Cards
+        for(let i=0; i<4; i++) itemsToReveal.push(addAlienToInventory(getRandomStandard(), activeRelease));
         for(let i=0; i<2; i++) itemsToReveal.push(addAlienToInventory(getRandomMutantOrRamm(), activeRelease));
         
         // PP
