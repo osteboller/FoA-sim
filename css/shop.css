@@ -1,6 +1,11 @@
 .shop-batch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(clamp(90px, 20vw, 130px), 1fr)); gap: 15px; margin-top: 20px; justify-content: center; }
 .shop-card-anim { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; }
-.shop-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+/* Fjern sticky hover på mobil ved kun at tillade det på enheder med mus */
+@media (hover: hover) {
+    .shop-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    .pack-display:hover .pack-price-tag { transform: rotate(25deg) scale(1.1); }
+}
 
 /* Retro Shop Header */
 .shop-top-bar {
@@ -44,7 +49,7 @@
 .pack-price-tag span { font-size: 0.8rem; font-weight: bold; margin-top: -2px; }
 .pack-price-tag.locked { background: #333; color: #888; border-color: #555; }
 
-.pack-display:hover .pack-price-tag { transform: rotate(25deg) scale(1.1); }
+.pack-display.is-tilted .pack-price-tag { transform: rotate(25deg) scale(1.1); }
 .pack-display:active .pack-price-tag { transform: scale(0.95); }
 
 .nav-arrow { background: rgba(0,0,0,0.3); color: #fff; border: 1px solid #555; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; z-index: 20; transition: 0.2s; position: absolute; top: 50%; transform: translateY(-50%); }
