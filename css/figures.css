@@ -36,6 +36,12 @@
     filter: drop-shadow(0 5px 5px rgba(0,0,0,0.4));
 }
 
+/* Gør våben mindre, da deres sprites fylder mere ud til kanten end aliens */
+.alien-figure[data-group="Weapons"] .alien-gif {
+    transform: scale(0.85); /* Skalerer dem ned i stedet for op */
+    margin-bottom: -25px; /* Skubber våbnet lidt længere ned mod svæve-basen */
+}
+
 .figure-base {
     position: relative;
     z-index: 1;
@@ -124,7 +130,6 @@
 .row-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(clamp(80px, 15vw, 110px), 1fr));
-    justify-items: center; /* Holder figuren i midten af sin faste kolonne */
     gap: 15px;
     padding-bottom: 20px;
     margin-bottom: 30px;

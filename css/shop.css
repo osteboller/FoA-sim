@@ -115,6 +115,7 @@
 #shop-batch .alien-figure .figure-label { opacity: 0; transition: opacity 0.1s 0.1s; }
 #shop-batch .alien-figure.revealed .figure-label { opacity: 1; }
 
+
 /* ANIMATIONS */
 .tier-1-shake { animation: shake 0.1s infinite; }
 .tier-2-pulse { animation: shake 0.1s infinite, pulseGlow 1s infinite alternate; }
@@ -169,6 +170,7 @@
 .opener-center-stage { display:flex; justify-content:center; gap:20px; flex-shrink:0; }
 .opener-wing-right { display:flex; justify-content:flex-start; gap:15px; flex:1; }
 .opener-standard-row { display:flex; justify-content:center; gap:2cqw; width:100%; flex-wrap:wrap; z-index:10; perspective:1000px; margin-top: 2cqh; }
+.opener-minor-row { display:flex; justify-content:center; gap:2cqw; width:100%; flex-wrap:wrap; z-index:10; perspective:1000px; margin-top: 2cqh; }
 
 .opener-btn-wrapper { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 10000; }
 .btn-buy-again { padding: 15px 50px; background: var(--green); color: #fff; border: 2px solid #fff; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.5rem; box-shadow: 0 0 20px rgba(0,255,0,0.5); animation: pulse 2s infinite; }
