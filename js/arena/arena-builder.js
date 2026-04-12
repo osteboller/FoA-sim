@@ -25,7 +25,7 @@ function renderBuilderHTML() {
             </div>
 
             <!-- SQUAD SLOTS -->
-            <div id="arena-squad" style="display:flex; justify-content:center; gap:10px; margin-bottom:20px; flex-wrap:wrap;"></div>
+            <div id="arena-squad" style="display:flex; justify-content:center; gap:35px 10px; margin-bottom:30px; flex-wrap:wrap; padding-top:20px;"></div>
 
             <div style="background:var(--panel); padding:20px; border-radius:15px; border:1px solid #333; text-align:left;">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
@@ -68,7 +68,7 @@ function renderBuilderHTML() {
                     </div>
                 </div>
 
-                <div id="arena-roster" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap:15px; max-height:450px; overflow-y:auto; padding-right:10px;"></div>
+                <div id="arena-roster" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(clamp(80px, 15vw, 110px), 1fr)); gap:35px 15px; justify-items:center; padding-top:20px;"></div>
             </div>
         </div>`;
 }

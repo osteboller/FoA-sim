@@ -9,6 +9,7 @@ let battleState = { round: 0, playerScore: 0, enemyScore: 0, history: [], stake:
 let arenaFilterType = 'all';
 let arenaCategory = 'warriors';
 let autoBattleTimer = null;
+let autoWeaponTimer = null;
 let currentArenaView = 'builder'; 
 let selectedLevel = 1;
 let isEndlessMode = false;
@@ -75,6 +76,9 @@ function startBattle() {
     arenaBattle.style.flexDirection = 'column';
     enemySquad = generateEnemy(selectedLevel);
     
+    // Tving Safari til at genberegne layoutet, så den ikke fejler med mobil-CSS'en på første kamp
+    void arenaBattle.offsetHeight;
+    
     if (typeof AudioManager !== 'undefined') AudioManager.bgm.play('battle-theme');
 
     const isAuto = document.getElementById('chk-auto-battle').checked;
@@ -94,6 +98,7 @@ function startBattle() {
 
     const modeText = isEndlessMode ? "Endless Modstander" : "Modstander";
     document.getElementById('battle-log').innerHTML = `<div>${modeText} fundet (Niveau ${selectedLevel}). Knyt næverne!</div>`;
+    document.getElementById('battle-round-text').innerText = "1";
     
     const wInd = document.getElementById('battle-weapon-indicator');
     if (wInd) {
@@ -122,8 +127,25 @@ function startBattle() {
 
 function toggleAutoBattle() {
     battleState.auto = document.getElementById('chk-auto-battle').checked;
-    if(battleState.auto) startAutoBattleTimer();
-    else if(autoBattleTimer) clearInterval(autoBattleTimer);
+    if(battleState.auto) {
+        const pIndex = battleState.playerMoves[battleState.round];
+        const currentAlien = arenaSquad[pIndex];
+        let weaponUsable = false;
+        if (battleState.phase === 'matchup' && selectedWeaponId && !battleState.weaponUsed) {
+            const wItem = weaponData.find(w => w.id == selectedWeaponId);
+            if (wItem && currentAlien) {
+                 weaponUsable = (wItem.type === 'weapon') || (currentAlien.type === 'metallic') || (currentAlien.type === wItem.type) || (currentAlien.type === 'hybrid' && (currentAlien.c1 === wItem.type || currentAlien.c2 === wItem.type));
+            }
+        }
+        if (battleState.phase === 'matchup' && weaponUsable) {
+            if (!autoWeaponTimer) autoWeaponTimer = setTimeout(() => { if(!battleState.aborted) activateWeapon(); }, 1500);
+        } else {
+            startAutoBattleTimer();
+        }
+    } else {
+        if(autoBattleTimer) clearInterval(autoBattleTimer);
+        if(autoWeaponTimer) { clearTimeout(autoWeaponTimer); autoWeaponTimer = null; }
+    }
     updateBattleControls();
 }
 
@@ -144,6 +166,7 @@ function startAutoBattleTimer() {
 }
 
 function activateWeapon() {
+    if(autoWeaponTimer) { clearTimeout(autoWeaponTimer); autoWeaponTimer = null; }
     if(battleState.weaponUsed) { showAlert("Du har allerede brugt dit våben i denne kamp.", "Våben Brugt"); return; }
     if(battleState.phase !== 'matchup') { showAlert("Du kan kun bruge våben i 'Matchup' fasen, før runden afgøres.", "Forkert Timing"); return; }
     
@@ -287,18 +310,30 @@ function playNextRound(manualIndex = -1) {
                 }
             }
             
-            if (battleState.auto) { setTimeout(() => { if(!battleState.aborted) resolveRound(); }, 1600); } 
-            else if (weaponUsable) { setTimeout(() => { if(!battleState.aborted) updateBattleControls(); }, 1600); } 
+            if (weaponUsable) { 
+                setTimeout(() => { 
+                    if(!battleState.aborted) {
+                        updateBattleControls(); 
+                        if (battleState.auto) {
+                            autoWeaponTimer = setTimeout(() => { if(!battleState.aborted) activateWeapon(); }, 1500);
+                        }
+                    }
+                }, 1600); 
+            } 
             else { setTimeout(() => { if(!battleState.aborted) resolveRound(); }, 1600); }
         }
     }, 1000);
 }
 
 function resolveRound() {
+    if(autoWeaponTimer) { clearTimeout(autoWeaponTimer); autoWeaponTimer = null; }
     battleState.phase = 'resolution';
     
     const centerOverlay = document.getElementById('battle-center-overlay');
-    if(centerOverlay) centerOverlay.style.display = 'none';
+    if(centerOverlay) {
+        centerOverlay.style.display = 'none';
+        centerOverlay.classList.remove('weapon-overlay-active');
+    }
     const vsText = document.getElementById('battle-vs-text');
     if(vsText) vsText.style.opacity = 1;
     
@@ -440,13 +475,16 @@ function endMatch() {
                 setTimeout(() => showAlert("Du har nået SFO Overnatning! Elite Collector Club er nu åben for dig i toppen af shoppen.", "Ny Funktion Låst Op!"), 2000);
             }
             if (state.maxLevel === 16) {
-                setTimeout(() => showAlert("Du har nået Rivalerne! Generation 2 Aliens kan nu findes i pakker, og 'The Vault' samt 'SciRoid BattleShip' er låst op i Shoppen.", "Generation 2 Låst Op!"), 2000);
+                setTimeout(() => showAlert("Du har nået Rivalerne! Generation 2 Aliens kan nu findes i pakker, og 'SciRoid BattleShip' er låst op i Shoppen.", "Generation 2 Låst Op!"), 2000);
             }
             if (state.maxLevel === 21) {
-                setTimeout(() => showAlert("Benvenuto in Italia! Den Italienske Blister pakke er nu tilgængelig i Shoppen.", "Ny Pakke Låst Op!"), 2000);
+                setTimeout(() => showAlert("Benvenuto in Italia! Den Italienske Blister pakke er nu tilgængelig i Shoppen, og 'The Vault' har åbnet i Elite-klubben.", "Nye Pakker Låst Op!"), 2000);
+            }
+            if (state.maxLevel === 26) {
+                setTimeout(() => showAlert("Velkommen til DK Mesterskabet! Den MEGA RARE pakke med Special Edition RAMMs er nu låst op i Elite Collector Club.", "Ny Elite Pakke!"), 2000);
             }
             if (state.maxLevel === 31) {
-                setTimeout(() => showAlert("Konnichiwa! Den Japanske Blister pakke er nu tilgængelig i Shoppen.", "Ny Pakke Låst Op!"), 2000);
+                setTimeout(() => showAlert("Konnichiwa! Den Japanske Blister pakke er nu tilgængelig i Shoppen, og Jangutz Khan kan købes i Elite-klubben!", "Nye Pakker Låst Op!"), 2000);
             }
         }
         showAnnouncement("<span style='color:var(--green); text-shadow:0 0 20px var(--green);'>DU VANDT!</span>", null, 3000);
@@ -505,6 +543,7 @@ function surrenderBattle() {
             }
             isEndlessMode = false;
             if(autoBattleTimer) clearInterval(autoBattleTimer);
+            if(autoWeaponTimer) { clearTimeout(autoWeaponTimer); autoWeaponTimer = null; }
             currentArenaView = 'builder';
             state.stats.totalLosses = (state.stats.totalLosses || 0) + 1;
             save();
