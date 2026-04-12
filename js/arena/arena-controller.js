@@ -18,13 +18,13 @@ function initArena() {
     
     let headerHTML = `
         <div id="arena-menu-container" style="text-align:center; max-width:900px; margin:0 auto;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h2 style="color:var(--red); text-transform:uppercase; letter-spacing:2px; margin:0;">ARENA</h2>
-                <div style="display:flex; gap:10px;">
-                    <button onclick="switchArenaView('builder')" class="filter-btn ${currentArenaView === 'builder' ? 'active' : ''}">BYG HOLD</button>
-                    <button onclick="switchArenaView('levels')" class="filter-btn ${currentArenaView === 'levels' ? 'active' : ''}">KAMPAGNE</button>
-                    <button onclick="switchArenaView('rules')" class="filter-btn ${currentArenaView === 'rules' ? 'active' : ''}">REGLER</button>
-                </div>
+            <div class="top-panel-header" style="border-top: 2px solid var(--red); border-bottom: 2px solid var(--red);">
+                <span style="color:var(--red);">ARENA</span>
+            </div>
+            <div style="display:flex; justify-content:center; align-items:center; margin-bottom:20px; flex-wrap: wrap; gap: 10px;">
+                <button onclick="switchArenaView('builder')" class="filter-btn ${currentArenaView === 'builder' ? 'active' : ''}">BYG HOLD</button>
+                <button onclick="switchArenaView('levels')" class="filter-btn ${currentArenaView === 'levels' ? 'active' : ''}">KAMPAGNE</button>
+                <button onclick="switchArenaView('rules')" class="filter-btn ${currentArenaView === 'rules' ? 'active' : ''}">REGLER</button>
             </div>
     `;
 
@@ -437,7 +437,10 @@ function endMatch() {
                 setTimeout(() => showAlert("Du har nået Skolegården! En ny pakke er nu tilgængelig i Shoppen.", "Ny Pakke Låst Op!"), 2000);
             }
             if (state.maxLevel === 11) {
-                setTimeout(() => showAlert("Du har nået Rivalerne! SciRoid BattleShip pakken er nu tilgængelig i Shoppen.", "Ny Pakke Låst Op!"), 2000);
+                setTimeout(() => showAlert("Du har nået SFO Overnatning! Elite Collector Club er nu åben for dig i toppen af shoppen.", "Ny Funktion Låst Op!"), 2000);
+            }
+            if (state.maxLevel === 16) {
+                setTimeout(() => showAlert("Du har nået Rivalerne! Generation 2 Aliens kan nu findes i pakker, og 'The Vault' samt 'SciRoid BattleShip' er låst op i Shoppen.", "Generation 2 Låst Op!"), 2000);
             }
             if (state.maxLevel === 21) {
                 setTimeout(() => showAlert("Benvenuto in Italia! Den Italienske Blister pakke er nu tilgængelig i Shoppen.", "Ny Pakke Låst Op!"), 2000);
@@ -509,7 +512,16 @@ function surrenderBattle() {
         });
 }
 
-function switchArenaView(view) { currentArenaView = view; initArena(); }
+function switchArenaView(view) { 
+    currentArenaView = view; 
+    initArena(); 
+    
+    // Luk sidemenuen på mobil, når der navigeres via sidemenuen
+    const nav = document.querySelector('nav');
+    if (nav && nav.classList.contains('open') && typeof toggleNav === 'function') {
+        toggleNav();
+    }
+}
 
 function selectLevel(lvl) {
     if (lvl > (state.maxLevel || 1)) return;

@@ -1,8 +1,8 @@
 const levelZones = [
     { id: 1, name: "Hjemme", range: [1, 5], desc: "Spil mod lillesøster, lillebror og naboen", color: "#4CAF50", opponentImg: "assets/campaign/locations/home.gif" },
     { id: 2, name: "Skolegården", range: [6, 10], desc: "Spil mod klassekammerater og de store", color: "#2196F3", opponentImg: "assets/campaign/locations/school.gif" },
-    { id: 3, name: "Rivalerne", range: [11, 15], desc: "Spil mod bøllerne fra den anden skole", color: "#FF9800", opponentImg: "assets/campaign/locations/rival_school.gif" },
-    { id: 4, name: "SFO Overnatning", range: [16, 20], desc: "Klubmesterskabet på fremmed græs", color: "#F44336", opponentImg: "assets/campaign/locations/sfo.gif" },
+    { id: 3, name: "SFO Overnatning", range: [11, 15], desc: "Klubmesterskabet på fremmed græs", color: "#FF9800", opponentImg: "assets/campaign/locations/sfo.gif" },
+    { id: 4, name: "Rivalerne", range: [16, 20], desc: "Spil mod bøllerne fra den anden skole", color: "#F44336", opponentImg: "assets/campaign/locations/rival_school.gif" },
     { id: 5, name: "Italien", range: [21, 25], desc: "Ferie! Spil mod de lokale mestre", color: "#9C27B0", opponentImg: "assets/campaign/locations/garda_italia.gif" },
     { id: 6, name: "DK Mesterskab", range: [26, 30], desc: "De bedste spillere i Danmark", color: "#E91E63", opponentImg: "assets/campaign/locations/dk_championship.gif" },
     { id: 7, name: "Japan", range: [31, 35], desc: "Verdensmesterskabet i Tokyo", color: "#00BCD4", opponentImg: "assets/campaign/locations/japan.gif" }
